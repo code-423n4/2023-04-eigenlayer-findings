@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "slashQueuedWithdrawal cannot skip malicious strategies",
+  "issueId": 6,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/6"
+}
