@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Jigsaw",
+  "risk": "2",
+  "title": "Malicious actor can withdraw assets staked by other users via hash collisions",
+  "issueId": 15,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/15"
+}
