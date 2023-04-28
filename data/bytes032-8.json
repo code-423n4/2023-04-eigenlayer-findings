@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "bytes032",
+  "risk": "2",
+  "title": "Incompatibility with Counterfactual ERC-4337 Accounts in Signature Validation",
+  "issueId": 8,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/8"
+}
