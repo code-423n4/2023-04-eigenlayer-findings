@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Jigsaw",
+  "risk": "2",
+  "title": "ECDSA.sol version used is subject to signature malleability. ",
+  "issueId": 17,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/17"
+}
