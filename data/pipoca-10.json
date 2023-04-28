@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "pipoca",
+  "risk": "3",
+  "title": "No proper input validation in deposit and withdrawal functions and lack of cool-off period",
+  "issueId": 10,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/10"
+}
