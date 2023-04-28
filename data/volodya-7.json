@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "All __GAPs have the same size, while the different contracts have a different number of storage variables. If the __GAP size isn't logical it is more difficult to maintain the code",
+  "issueId": 7,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/7"
+}
