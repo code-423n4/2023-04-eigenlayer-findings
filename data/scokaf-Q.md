@@ -119,3 +119,58 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 ## Tools Used
 
 Manual Analysis
+
+
+# 2: GENERATE PERFECT CODE HEADERS EVERY TIME					
+
+Vulnerability details
+
+## Context:
+
+We recommend using a header for Solidity code layout and readability
+
+> ***Example***
+
+ /*//////////////////////////////////////////////////////////////
+                           TESTING 123
+//////////////////////////////////////////////////////////////*/
+
+
+For reference, see https://github.com/transmissions11/headers
+
+NOTE: ERC20PermitLight.sol already applies this recommendation.
+
+## Proof of Concept
+
+All Contracts
+
+
+## Tools Used
+
+Manual Analysis
+
+
+# 3: INTERCHANGEABLE USAGE OF UINT AND UINT256
+
+Vulnerability details
+
+## Context:
+
+Interchangeable usage of uint and uint256. Below are instances where uint was used rather than uint256 like in the rest of the code.
+
+## Proof of Concept
+
+> ***File: libraries/Merkle.sol***
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L137
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L145
+
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+Consider using only one approach throughout the codebase, e.g. only uint or only uint256.
