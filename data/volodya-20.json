@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "3",
+  "title": "\"verifyAndProcessWithdrawal\" can be abused to steal from every validator at least once.",
+  "issueId": 20,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/20"
+}
