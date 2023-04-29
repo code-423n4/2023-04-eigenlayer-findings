@@ -110,9 +110,30 @@ Apart from these, there are several minor bug fixes and improvements
 
 Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation as well as zero address checks for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
 
+
+
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
+        external
+        initializer
+    {
+        DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
+        _initializePauser(_pauserRegistry, initialPausedStatus);
+        _transferOwnership(initialOwner);
+        _setStrategyWhitelister(initialStrategyWhitelister);
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
+
+582: function setWithdrawalDelayBlocks(uint256 _withdrawalDelayBlocks) external onlyOwner {
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
 
 ```
+[StrategyManager.sol#L146-L155](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L155)
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L655-L672
 
 
 ##
@@ -124,7 +145,21 @@ Function calls made in unbounded loop are error-prone with potential resource ex
 
 ```solidity
 
+        for (uint256 i = 0; i < strategiesToWhitelistLength;) {
+            // change storage and emit event only if strategy is not already in whitelist
+            if (!strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]]) {
+                strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]] = true;
+                emit StrategyAddedToDepositWhitelist(strategiesToWhitelist[i]);
+            }
+            unchecked {
+                ++i;
+            }
+
+
 ```
+[StrategyManager.sol#L594-L602](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L594-L602)
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L609-L617
 
 ```solidity
 
@@ -145,9 +180,15 @@ https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.s
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
+587: function setStrategyWhitelister(address newStrategyWhitelister) external onlyOwner {
+        _setStrategyWhitelister(newStrategyWhitelister);
+    }
 
 ```
+[StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
+
 
 
 ```solidity
@@ -189,8 +230,14 @@ So even if you followed the "check-effects-interactions" pattern correctly, it's
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+587: function setStrategyWhitelister(address newStrategyWhitelister) external onlyOwner {
+        _setStrategyWhitelister(newStrategyWhitelister);
+    }
 
 ```
+[StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
 
 
 ```solidity
@@ -201,10 +248,63 @@ Recommended Mitigation:
 
 ```solidity
 
- 
+```
 
+##
+
+## [L-14] initialize() functions could be front run 
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+146: function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
+        external
+        initializer
 
 ```
+[StrategyManager.sol#L146-L148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L148)
+
+##
+
+## [L-15] INITIALIZE() FUNCTION CAN BE CALLED BY ANYBODY
+
+initialize() function can be called anybody when the contract is not initialized.
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+146: function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
+        external
+        initializer
+
+```
+[StrategyManager.sol#L146-L148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L148)
+
+
+Recommended Mitigation Steps
+
+Add a control that makes initialize() only call the Deployer Contract;
+
+if (msg.sender != DEPLOYER_ADDRESS) {
+						revert NotDeployer();
+				}
+
+##
+
+## [L-16] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
+
+See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+150: DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
+276: bytes32 domain_separator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), block.chainid, address(this)));
+
+```
+[StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
+
+ 
 
 ##
 
@@ -245,6 +345,7 @@ internal and private functions : the mixedCase format starting with an underscor
 
 ```solidity
 
+
 ```
 
 
@@ -253,8 +354,26 @@ internal and private functions : the mixedCase format starting with an underscor
 ## [NC-4] Need Fuzzing test for unchecked
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+269:  unchecked {
+379:  unchecked {
+395:  unchecked {
+517:  unchecked {
+563:  unchecked {
+574:  unchecked {
+600:  unchecked {
+615:  unchecked {
+692:  unchecked {
+731:  unchecked {
+791:  unchecked {
+799:  unchecked {
+863:  unchecked {
+
 
 ```
+[StrategyManager.sol#L269](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L269)
+
 ##
 
 ## [NC-5] Remove commented out code
@@ -281,9 +400,14 @@ Some files use >=, some use ^. The instances below are examples of the method th
 ## [NC-7] NO SAME VALUE INPUT CONTROL
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
+587: function setStrategyWhitelister(address newStrategyWhitelister) external onlyOwner {
+        _setStrategyWhitelister(newStrategyWhitelister);
+    }
 
 ```
+[StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
 
 ##
 
@@ -400,7 +524,17 @@ Emitting both old and new values for critical changes is a good practice in Soli
 
 ```solidity
 
+220: function depositIntoStrategy(IStrategy strategy, IERC20 token, uint256 amount)
+        external
+        onlyWhenNotPaused(PAUSED_DEPOSITS)
+        onlyNotFrozen(msg.sender)
+        nonReentrant
+        returns (uint256 shares)
+
 ```
+[StrategyManager.sol#L220-L225)](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L220-L225)
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L248-L260
 
 ##
 
@@ -449,7 +583,21 @@ Consider using named parameters in mappings (e.g. mapping(address account => uin
 
 ```
 
-##
+## [NC-25] Shorter inheritance list
+
+``solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+26: contract StrategyManager is
+    Initializable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable,
+    Pausable,
+    StrategyManagerStorage
+{
+
+```
+[StrategyManager.sol#L26-L32](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L26-L32)
 
 
 
