@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "SaeedAlipoor01988",
+  "risk": "2",
+  "title": "User cannot deposit amount more than strategy._tokenBalance() in to strategy",
+  "issueId": 28,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/28"
+}
