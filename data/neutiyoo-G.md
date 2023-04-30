@@ -1,6 +1,6 @@
-# Optimize `merkleizeSha256` function for gas-efficiency
+## [G-01] Optimize `merkleizeSha256` function for gas-efficiency
 
-## Description
+### Description
 
 **Severity**: Optimization
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
@@ -8,16 +8,15 @@
 Currently, the [`merkleizeSha256` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153
 ) is implemented correctly, but the following optimizations for can be made:
 
-### 1. In-place Computation
+#### 1. In-place Computation
 The pairwise hashes are computed in-place using a buffer, eliminating the need for creating new arrays to store intermediate hashes at each level of the Merkle tree. This reduces memory usage and gas costs.
 
 This optimization requires that the `leaves` array is not used again after it is modified. Based on the current implementation, this assumption has proven to be valid, as there are no further usages of the `leaves` array.
 
-### 2. Fixed-size buffer and Assembly
+#### 2. Fixed-size buffer and Assembly
 Using a fixed-size buffer instead of dynamically allocating memory can be more efficient in terms of gas usage. Also, the use of assembly code to load the left and right siblings into memory can be more efficient than using the `abi.encodePacked` function.
 
-
-## Recommendation
+### Recommendation
 Consider using a fixed-size buffer to compute the pairwise hashes in-place and updates the input array with the result. This eliminates the need for creating new arrays and reduces the number of iterations needed to compute the final Merkle root. As a result, it is more gas-efficient and performs better for large inputs.
 
 
