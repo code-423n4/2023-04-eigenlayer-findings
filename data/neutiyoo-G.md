@@ -14,13 +14,11 @@ This optimization requires that the `leaves` array is not used again after it is
 **2. Fixed-size buffer and Assembly**
 Using a fixed-size buffer instead of dynamically allocating memory can be more efficient in terms of gas usage. Also, the use of assembly code to load the left and right siblings into memory can be more efficient than using the `abi.encodePacked` function.
 
-### Recommendation
-Consider using a fixed-size buffer to compute the pairwise hashes in-place and updates the input array with the result. This eliminates the need for creating new arrays and reduces the number of iterations needed to compute the final Merkle root. As a result, it is more gas-efficient and performs better for large inputs.
+### Proof of Concept
 
-
-Here is a sample optimized implementation which is adapted from the [Optimism's Lib_MerkleTree.sol](https://github.com/ethereum-optimism/optimism/blob/e6f1f61c569dbabffa2cfe6129e8e23a8646ffca/packages/contracts/contracts/libraries/utils/Lib_MerkleTree.sol#L13-L22).
+The following `merkleizeSha256Optimized` is an optimized implementation of `merkleizeSha256` and it is adapted from the [Optimism's Lib_MerkleTree.sol](https://github.com/ethereum-optimism/optimism/blob/e6f1f61c569dbabffa2cfe6129e8e23a8646ffca/packages/contracts/contracts/libraries/utils/Lib_MerkleTree.sol#L13-L22):
 ```solidity
-    function merkleizeSha256(
+    function merkleizeSha256Optimized(
         bytes32[] memory leaves
     ) internal pure returns (bytes32) {
         // Reserve memory space for our hashes.
@@ -56,3 +54,80 @@ Here is a sample optimized implementation which is adapted from the [Optimism's 
         return leaves[0];
     }
 ```
+
+### Impact
+
+| test/Merkle.t.sol:MerkleMock contract |                 |        |        |         |         |
+|---------------------------------------|-----------------|--------|--------|---------|---------|
+| Deployment Cost                       | Deployment Size |        |        |         |         |
+| 344580                                | 1753            |        |        |         |         |
+| Function Name                         | min             | avg    | median | max     | # calls |
+| merkleizeSha256                       | 2353            | 274987 | 62975  | 1396167 | 10      |
+| merkleizeSha256Optimized              | 2210            | 253962 | 59636  | 1272892 | 10      |
+
+| Improvement |         |
+| ----------- | ------- |
+| Minimum     | `6.08%` |
+| Average     | `7.64%` |
+| Median      | `5.30%` |
+| Maximum     | `8.81%` |
+
+These percentages show that `merkleizeSha256Optimized` provides a noticeable improvement over `merkleizeSha256`, with the largest improvement being in the maximum execution time. It's worth noting that these percentages are specific to the input data and the environment in which the functions were run, so they may vary in other contexts. Nonetheless, they give a rough idea of the performance improvement that can be expected from using the optimized version of the function.
+
+
+It should be noted that these percentages are specific to the input data and the environment in which the functions were run, so they may vary in other contexts. Nonetheless, these results give a rough idea of the performance improvement that can be expected from using the optimized version of the function. 
+
+The test codes are the following:
+```solidity
+// SPDX-License-Identifier: UNLICENSED
+pragma solidity =0.8.12;
+
+import "forge-std/Test.sol";
+import "../src/Merkle.sol";
+
+contract MerkleMock {
+    function merkleizeSha256(
+        bytes32[] calldata gen
+    ) external pure returns (bytes32) {
+        return Merkle.merkleizeSha256(gen);
+    }
+
+    function merkleizeSha256Optimized(
+        bytes32[] calldata gen
+    ) external pure returns (bytes32) {
+        return Merkle.merkleizeSha256Optimized(gen);
+    }
+}
+
+contract MerkleTest is Test {
+    MerkleMock public c;
+
+    function setUp() public {
+        c = new MerkleMock();
+    }
+
+    function gen(uint256 length) internal pure returns (bytes32[] memory) {
+        bytes32[] memory leaves = new bytes32[](length);
+        for (uint i = 0; i < length; i++) {
+            leaves[i] = bytes32(i);
+        }
+        return leaves;
+    }
+
+    function testMerkleizeSha256Equivalence() public {
+        for (uint i = 2; i <= 1024; i *= 2) {
+            assertEq(
+                c.merkleizeSha256(gen(i)),
+                c.merkleizeSha256Optimized(gen(i)),
+                "ok"
+            );
+        }
+    }
+}
+```
+
+### Recommendation
+Consider using a fixed-size buffer to compute the pairwise hashes in-place and updates the input array with the result. This eliminates the need for creating new arrays and reduces the number of iterations needed to compute the final Merkle root. As a result, it is more gas-efficient and performs better for large inputs.
+
+
+
