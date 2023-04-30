@@ -2,7 +2,6 @@
 
 ### Description
 
-**Severity**: Optimization
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
 
 Currently, the [`merkleizeSha256` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153
