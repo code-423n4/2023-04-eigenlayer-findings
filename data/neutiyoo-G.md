@@ -23,7 +23,7 @@ Consider using a fixed-size buffer to compute the pairwise hashes in-place and u
 
 Here is the sample implementation which is adapted from the [Optimism's Lib_MerkleTree.sol](https://github.com/ethereum-optimism/optimism/blob/e6f1f61c569dbabffa2cfe6129e8e23a8646ffca/packages/contracts/contracts/libraries/utils/Lib_MerkleTree.sol#L13-L22)
 ```solidity
-function merkleizeSha256(
+    function merkleizeSha256(
         bytes32[] memory leaves
     ) internal pure returns (bytes32) {
         // Reserve memory space for our hashes.
