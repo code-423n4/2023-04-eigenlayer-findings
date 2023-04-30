@@ -20,4 +20,10 @@ a) Pausable.sol
   }
 
 
+b) EigenPodManager.createPod() and stake has duplication of logic related to, if the msg.sender has a pod.
+
+instead, in the stake function could leverage hasPod() to check if pod does not exist, create one
+and then retreive the pod and stake on that pod.
+  
+
   
