@@ -136,6 +136,24 @@ function initialize(address initialOwner, address initialStrategyWhitelister, IP
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L655-L672
 
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+127: function restakeBeaconChainETH(address podOwner, uint256 amount) external onlyEigenPod(podOwner) {
+        strategyManager.depositBeaconChainETH(podOwner, amount);
+        emit BeaconChainETHDeposited(podOwner, amount);
+    }
+
+139: function recordOvercommittedBeaconChainETH(address podOwner, uint256 beaconChainETHStrategyIndex, uint256 amount) external onlyEigenPod(podOwner) {
+        strategyManager.recordOvercommittedBeaconChainETH(podOwner, beaconChainETHStrategyIndex, amount);
+    }
+
+```
+[EigenPodManager.sol#L127-L130](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L127-L130)
+
+
+
+
 ##
 
 ## [L-7] Function Calls in Loop Could Lead to Denial of Service
@@ -264,6 +282,40 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L146-L148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L148)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+51: function initialize(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) public virtual initializer {
+        _initializeStrategyBase(_underlyingToken, _pauserRegistry);
+    }
+
+```
+[StrategyBase.sol#L51-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L51-L53)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+152: function initialize(address _podOwner) external initializer {
+
+```
+[EigenPod.sol#L152](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L152)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+function initialize(
+        IBeaconChainOracle _beaconChainOracle,
+        address initialOwner,
+        IPauserRegistry _pauserRegistry,
+        uint256 _initPausedStatus
+    ) external initializer {
+
+
+```
+[EigenPodManager.sol#L84-L89](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L84-L89)
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L49
+
 ##
 
 ## [L-15] INITIALIZE() FUNCTION CAN BE CALLED BY ANYBODY
@@ -279,6 +331,55 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L146-L148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L148)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+51: function initialize(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) public virtual initializer {
+        _initializeStrategyBase(_underlyingToken, _pauserRegistry);
+    }
+
+```
+[StrategyBase.sol#L51-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L51-L53)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+152: function initialize(address _podOwner) external initializer {
+
+```
+[EigenPod.sol#L152](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L152)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+function initialize(
+        IBeaconChainOracle _beaconChainOracle,
+        address initialOwner,
+        IPauserRegistry _pauserRegistry,
+        uint256 _initPausedStatus
+    ) external initializer {
+
+
+```
+[EigenPodManager.sol#L84-L89](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L84-L89)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+function initialize(
+        IBeaconChainOracle _beaconChainOracle,
+        address initialOwner,
+        IPauserRegistry _pauserRegistry,
+        uint256 _initPausedStatus
+    ) external initializer {
+
+
+```
+[EigenPodManager.sol#L84-L89](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L84-L89)
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L49
+
 
 
 Recommended Mitigation Steps
@@ -304,6 +405,83 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
 
+##
+
+## [L-17] Prevent division by 0
+
+On several locations in the code precautions are not being taken for not dividing by 0, this will revert the code.
+These functions can be called with 0 value in the input, this value is not checked for being bigger than 0, that means in some scenarios this can potentially trigger a division by zero
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+152: amountToSend = (_tokenBalance() * amountShares) / priorTotalShares;
+
+```
+[StrategyBase.sol#L152](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L152)
+
+##
+
+## [L-18] Missing Event for critical parameters init and change
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+function initialize(address _podOwner) external initializer {
+        require(_podOwner != address(0), "EigenPod.initialize: podOwner cannot be zero address");
+        podOwner = _podOwner;
+    }
+
+```
+[EigenPod.sol#L152-L155](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L152-L155)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+56: function _initializeStrategyBase(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) internal onlyInitializing {
+        underlyingToken = _underlyingToken;
+        _initializePauser(_pauserRegistry, UNPAUSE_ALL);
+    }
+
+```
+[StrategyBase.sol#L56-L59](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L56-L59)
+
+
+
+
+Description
+Events help non-contract tools to track changes, and events prevent users from being surprised by changes.
+
+Recommendation
+Add Event-Emit 
+
+##
+
+## [L-19] Use right way to convert bytes to bytes32 
+
+If _podWithdrawalCredentials() returns a value of type bytes, then using bytes32(_podWithdrawalCredentials()) to convert it to a bytes32 variable is not the correct way to do it.
+
+You should first convert the bytes value to a bytes32 value. One way to do this is by using the abi.encodePacked function to concatenate the bytes value with a zero-padded bytes value of length 32, and then using the bytes32 typecast to convert the result to a bytes32 variable
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+189:  require(validatorFields[BeaconChainProofs.VALIDATOR_WITHDRAWAL_CREDENTIALS_INDEX] == bytes32(_podWithdrawalCredentials()),
+
+```
+[EigenPod.sol#L189](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L189)
+
+### Recommended Mitigation:
+
+```solidity
+bytes memory podWithdrawalCreds = _podWithdrawalCredentials();
+require(podWithdrawalCreds.length <= 32, "Pod withdrawal credentials must not exceed 32 bytes");
+bytes32 podWithdrawalCreds32 = bytes32(uint256(abi.encodePacked(podWithdrawalCreds, bytes32(0))));
+
+```
+
+
+
  
 
 ##
@@ -315,9 +493,29 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ## [NC-1] immutable should be uppercase
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+44: IETHPOSDeposit public immutable ethPOS;
+47: IDelayedWithdrawalRouter public immutable delayedWithdrawalRouter;
+50: IEigenPodManager public immutable eigenPodManager;
+
 
 
 ```
+[EigenPod.sol#L44](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L44)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+40: IETHPOSDeposit public immutable ethPOS;
+43: IBeacon public immutable eigenPodBeacon;
+46: IStrategyManager public immutable strategyManager;
+49: ISlasher public immutable slasher;
+52: IBeaconChainOracle public beaconChainOracle;
+
+
+```
+[EigenPodManager.sol#L40](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L40)
 
 
 ### Recommended Mitigation
@@ -345,8 +543,36 @@ internal and private functions : the mixedCase format starting with an underscor
 
 ```solidity
 
+130: function computePhase0BeaconBlockHeaderRoot(bytes32[NUM_BEACON_BLOCK_HEADER_FIELDS] calldata blockHeaderFields) internal pure returns(bytes32) {
+140: function computePhase0BeaconStateRoot(bytes32[NUM_BEACON_STATE_FIELDS] calldata beaconStateFields) internal pure returns(bytes32) {
+150: function computePhase0ValidatorRoot(bytes32[NUM_VALIDATOR_FIELDS] calldata validatorFields) internal pure returns(bytes32) {  
+160: function computePhase0Eth1DataRoot(bytes32[NUM_ETH1_DATA_FIELDS] calldata eth1DataFields) internal pure returns(bytes32) {  
+178: function getBalanceFromBalanceRoot(uint40 validatorIndex, bytes32 balanceRoot) internal pure returns (uint64) {
+
+192: function verifyValidatorFields(
+        uint40 validatorIndex,
+        bytes32 beaconStateRoot,
+        bytes calldata proof, 
+        bytes32[] calldata validatorFields
+    ) internal view {
+
+221: function verifyValidatorBalance(
+        uint40 validatorIndex,
+        bytes32 beaconStateRoot,
+        bytes calldata proof,
+        bytes32 balanceRoot
+    ) internal view {
+
+245:  function verifyWithdrawalProofs(
+        bytes32 beaconStateRoot,
+        WithdrawalProofs calldata proofs,
+        bytes32[] calldata withdrawalFields
+    ) internal view {
+
 
 ```
+[BeaconChainProofs.sol#L130](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L130)
+
 
 
 ##
@@ -598,6 +824,50 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L26-L32](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L26-L32)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+31: contract EigenPodManager is Initializable, OwnableUpgradeable, Pausable, IEigenPodManager, EigenPodPausingConstants {
+
+```
+[EigenPodManager.sol#L31](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L31)
+
+##
+
+## [NC-26] Include return parameters in NatSpec comments
+
+### Context
+All Contracts
+
+### Description
+It is recommended that Solidity contracts are fully annotated using NatSpec for all public interfaces (everything in the ABI). It is clearly stated in the Solidity official documentation. In complex projects such as Defi, the interpretation of all functions and their arguments and returns is important for code readability and auditability.
+
+https://docs.soliditylang.org/en/v0.8.15/natspec-format.html
+
+### Recommendation
+Include return parameters in NatSpec comments
+
+### Recommendation Code Style: (from Uniswap3)
+
+    /// @notice Adds liquidity for the given recipient/tickLower/tickUpper position
+    /// @dev The caller of this method receives a callback in the form of IUniswapV3MintCallback#uniswapV3MintCallback
+    /// in which they must pay any token0 or token1 owed for the liquidity. The amount of token0/token1 due depends
+    /// on tickLower, tickUpper, the amount of liquidity, and the current price.
+    /// @param recipient The address for which the liquidity will be created
+    /// @param tickLower The lower tick of the position in which to add liquidity
+    /// @param tickUpper The upper tick of the position in which to add liquidity
+    /// @param amount The amount of liquidity to mint
+    /// @param data Any data that should be passed through to the callback
+    /// @return amount0 The amount of token0 that was paid to mint the given amount of liquidity. Matches the value in the callback
+    /// @return amount1 The amount of token1 that was paid to mint the given amount of liquidity. Matches the value in the callback
+    function mint(
+        address recipient,
+        int24 tickLower,
+        int24 tickUpper,
+        uint128 amount,
+        bytes calldata data
+    ) external returns (uint256 amount0, uint256 amount1);
 
 
 
