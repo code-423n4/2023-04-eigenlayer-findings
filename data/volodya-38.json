@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "The condition for full withdrawals in the code is different from that in the documentation.",
+  "issueId": 38,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/38"
+}
