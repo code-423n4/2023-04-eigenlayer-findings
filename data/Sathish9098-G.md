@@ -16,7 +16,7 @@
 | [G-12] | Use assembly to check for address(0)  | 7 | 42 |
 | [G-13] | Shorthand way to write if / else statement can reduce the deployment cost| 4 | - |
 | [G-14] | The Less gas consuming condition checks should be on top  | 1 | - |
-| [G-15] | nternal functions not called by the contract should be removed to save deployment gas  | 3 | - |
+| [G-15] | Internal functions not called by the contract should be removed to save deployment gas  | 3 | - |
 | [G-16] | Modifiers or private functions only called once can be inlined to save gas | 2 | 80 |
 | [G-17] | NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS  | 12 | - |
 | [G-18] | Use constants instead of type(uintx).max  | 5 | - |
@@ -115,13 +115,33 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+131: bytes32[] memory paddedHeaderFields = new bytes32[](2**BEACON_BLOCK_HEADER_FIELD_TREE_HEIGHT);
+141: bytes32[] memory paddedBeaconStateFields = new bytes32[](2**BEACON_STATE_FIELD_TREE_HEIGHT);
+151: bytes32[] memory paddedValidatorFields = new bytes32[](2**VALIDATOR_FIELD_TREE_HEIGHT);
+161: bytes32[] memory paddedEth1DataFields = new bytes32[](2**ETH1_DATA_FIELD_TREE_HEIGHT);
 
 ```
+[BeaconChainProofs.sol#L131](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L131)
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+62: DelayedWithdrawal memory delayedWithdrawal = DelayedWithdrawal({
+                amount: withdrawalAmount,
+                blockCreated: uint32(block.number)
+            });
+
+114: DelayedWithdrawal[] memory claimableDelayedWithdrawals = new DelayedWithdrawal[](claimableDelayedWithdrawalsLength);
+
+144: DelayedWithdrawal memory delayedWithdrawal = _userWithdrawals[recipient].delayedWithdrawals[delayedWithdrawalsCompletedBefore + i];
+
+
 
 ```
+[DelayedWithdrawalRouter.sol#L62-L65](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L62-L65)
 
 ##
 
@@ -174,19 +194,32 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 94: event WithdrawalDelayBlocksSet(uint256 previousValue, uint256 newValue);
 
-
-
-
 ```
 [StrategyManager.sol#L65-L67](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L65-L67)
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+82:  event EigenPodStaked(bytes pubkey);
+85:  event ValidatorRestaked(uint40 validatorIndex);
+88:  event ValidatorOvercommitted(uint40 validatorIndex);
+91:  event FullWithdrawalRedeemed(uint40 validatorIndex, address indexed recipient, uint64 withdrawalAmountGwei);
+94:  event PartialWithdrawalRedeemed(uint40 validatorIndex, address indexed recipient, uint64 partialWithdrawalAmountGwei);
+97:  event RestakedBeaconChainETHWithdrawn(address indexed recipient, uint256 amount);
 
 ```
+[EigenPod.sol#L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L82)
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+13: event WithdrawalDelayBlocksSet(uint256 previousValue, uint256 newValue);
+33: event DelayedWithdrawalCreated(address podOwner, address recipient, uint256 amount, uint256 index);
+36: event DelayedWithdrawalsClaimed(address recipient, uint256 amountClaimed, uint256 delayedWithdrawalsCompleted);
+
 
 ```
+[DelayedWithdrawalRouter.sol#L13](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L13)
 
 ```solidity
 
@@ -209,13 +242,29 @@ Devoid of sanity/threshold/limit checks, critical parameters can be configured t
 If any human/accidental errors happen need to redeploy the contract so this create the huge gas lose
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+46: constructor(IStrategyManager _strategyManager) {
+        strategyManager = _strategyManager;
+        _disableInitializers();
+    }
+
+57:  underlyingToken = _underlyingToken;
 
 ```
+[StrategyBase.sol#L46-L49](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L46-L49)
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+77: ethPOS = _ethPOS;
+78: eigenPodBeacon = _eigenPodBeacon;
+79: strategyManager = _strategyManager;
+80: slasher = _slasher;
 
 ```
+[EigenPodManager.sol#L77-L80](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L77-L80)
 
 
 ```solidity
@@ -275,8 +324,13 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+139: require(updatedTotalShares >= MIN_NONZERO_TOTAL_SHARES || updatedTotalShares == 0,
+            "StrategyBase.withdraw: updated totalShares amount would be nonzero but below MIN_NONZERO_TOTAL_SHARES");
 
 ```
+[StrategyBase.sol#L139-L140](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L139-L140)
 
 
 ```solidity
@@ -348,17 +402,13 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L96-L122](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L96-L122)
 
-```solidity
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L99-L124
 
-```
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L131-L134
 
-```solidity
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L66-L74
 
-```
-
-```solidity
-
-```
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L39-L42
 
 
 ##
@@ -414,8 +464,36 @@ FILE: FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L343](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L343)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+114: if(address(pod) == address(0)) {
+196: if (address(pod) == address(0)) {
+211: return address(ownerToPod[podOwner]) != address(0);
+
+
+```
+[EigenPodManager.sol#L114](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L114)
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+153: require(_podOwner != address(0), "EigenPod.initialize: podOwner cannot be zero address");
+
+```
+[EigenPod.sol#L153](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L153)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+
+
+```
+
+
+
+```solidity
+
 
 ```
 
@@ -467,9 +545,35 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+96: if (priorTokenBalance == 0) {
+                newShares = amount;
+            } else {
+                newShares = (amount * totalShares) / priorTokenBalance;
+            }
+
+149: if (priorTotalShares == amountShares) {
+            amountToSend = _tokenBalance();
+        } else {
+            amountToSend = (_tokenBalance() * amountShares) / priorTotalShares;
+        }
+
+173: if (totalShares == 0) {
+            return amountShares;
+        } else {
+            return (_tokenBalance() * amountShares) / totalShares;
+        }
+
+198: if (tokenBalance == 0 || totalShares == 0) {
+            return amountUnderlying;
+        } else {
+            return (amountUnderlying * totalShares) / tokenBalance;
+        }
 
 
 ```
+[StrategyBase.sol#L96-L100](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L96-L100)
 
 ```solidity
 
@@ -521,8 +625,12 @@ Instances ()
 ITs possible to save 40-50 gas
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+119:  modifier onlyStrategiesWhitelistedForDeposit(IStrategy strategy) {
 
 ```
+[StrategyManager.sol#L119](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L119)
 
 
 ```solidity
@@ -538,6 +646,7 @@ ITs possible to save 40-50 gas
 Instances ()
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 function _depositIntoStrategy(address depositor, IStrategy strategy, IERC20 token, uint256 amount)
         internal
@@ -548,20 +657,8 @@ function _depositIntoStrategy(address depositor, IStrategy strategy, IERC20 toke
 ```
 [StrategyManager.sol#L655-L659](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L655-L659)
 
-```solidity
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L78-L84
 
-
-```
-
-```solidity
-
-```
-
-
-```solidity
-
-
-```
 
 ##
 
@@ -584,7 +681,7 @@ type(uint256).max it uses more gas in the distribution process and also for each
 
 ##
 
-## [G-20] Use assembly for address state variables 
+## [G-20] Use assembly to assign address state variables 
 
 
 ##
@@ -595,6 +692,26 @@ Upgrade to the latest solidity version 0.8.19 to get additional gas savings. See
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+3: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 2: pragma solidity =0.8.12;
 
@@ -614,6 +731,17 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L200)](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L200)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+131: bytes32[] memory paddedHeaderFields = new bytes32[](2**BEACON_BLOCK_HEADER_FIELD_TREE_HEIGHT);
+141: bytes32[] memory paddedBeaconStateFields = new bytes32[](2**BEACON_STATE_FIELD_TREE_HEIGHT);
+151: bytes32[] memory paddedValidatorFields = new bytes32[](2**VALIDATOR_FIELD_TREE_HEIGHT);
+161: bytes32[] memory paddedEth1DataFields = new bytes32[](2**ETH1_DATA_FIELD_TREE_HEIGHT);
+
+```
+[BeaconChainProofs.sol#L131](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L131)
 
 ##
 
@@ -646,9 +774,19 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+175: abi.encode(eigenPodBeacon, "")
+202: abi.encode(eigenPodBeacon, "")
+
+
+```
+[EigenPodManager.sol#L175](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L175)
+
 ##
 
-## [G-24] Duplicated require()/revert() Checks Should Be Refactored To A Modifier Or Function
+## [G-24] Duplicated require()/revert()/IF Checks Should Be Refactored To A Modifier Or Function
 
 Saves deployment costs
 
@@ -658,9 +796,28 @@ FILE: FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 631: require(depositor != address(0), "StrategyManager._addShares: depositor cannot be zero address");
 684: require(depositor != address(0), "StrategyManager._removeShares: depositor cannot be zero address");
 
-
 ```
 [StrategyManager.sol#L684](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L684)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+92:  if (totalShares == 0) {
+173: if (totalShares == 0) {
+
+86:  require(token == underlyingToken, "StrategyBase.deposit: Can only deposit underlyingToken");
+128: require(token == underlyingToken, "StrategyBase.withdraw: Can only withdraw the strategy token");
+
+```
+[StrategyBase.sol#L92](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L92)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+114: if(address(pod) == address(0)) {
+196: if (address(pod) == address(0)) {
+```
+[EigenPodManager.sol#L114](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L114)
 
 
 ##
@@ -682,6 +839,16 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+242: return underlyingToken.balanceOf(address(this));
+236:return strategyManager.stakerStrategyShares(user, IStrategy(address(this)));
+
+
+```
+[StrategyBase.sol#L242](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L242)
 
 ##
 
@@ -733,9 +900,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L415](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L415)
 
-```solidity
 
-```
 
 ```solidity
 
@@ -765,6 +930,62 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L358](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L358)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+133: for (uint256 i = 0; i < NUM_BEACON_BLOCK_HEADER_FIELDS; ++i) {
+143: for (uint256 i = 0; i < NUM_BEACON_STATE_FIELDS; ++i) {
+153: for (uint256 i = 0; i < NUM_VALIDATOR_FIELDS; ++i) {
+163: for (uint256 i = 0; i < ETH1_DATA_FIELD_TREE_HEIGHT; ++i) {
+
+
+```
+[BeaconChainProofs.sol#L133](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L133)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+115: for (uint256 i = 0; i < claimableDelayedWithdrawalsLength; i++) {
+
+
+```
+[DelayedWithdrawalRouter.sol#L115](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L115)
+
+##
+
+## [G-31] Checking Non-Zero Amount Values Before Transferring to Minimize or avoid unnecessary Execution Costs 
+
+Checking the value of the amount to ensure it is non-zero before transferring it can help you avoid unnecessary execution costs and ensure that the transfer is successful.
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+155: underlyingToken.safeTransfer(depositor, amountToSend);
+
+```
+[StrategyBase.sol#L155](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L155)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+
+
+```
+
+##
+
+## [G-32] Avoid contract existence checks by using low level calls
+
+Prior to 0.8.10 the compiler inserted extra code, including EXTCODESIZE (100 gas), to check for contract existence for external function calls. In more recent solidity versions, the compiler will not insert these checks if the external call has a return value. Similar behavior can be achieved in earlier versions by using low-level calls, since low level calls never check for contract existence
+
+##
+
+## [G-33] Don't declare the variables inside the loops
+
+Declare outside the loop and only use inside
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L142-L144
 
 
 
