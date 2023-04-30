@@ -11,7 +11,7 @@ Currently, the [`merkleizeSha256` function](https://github.com/code-423n4/2023-0
 ### 1. In-place Computation
 The pairwise hashes are computed in-place using a buffer, eliminating the need for creating new arrays to store intermediate hashes at each level of the Merkle tree. This reduces memory usage and gas costs.
 
-This a
+This optimization requires that the `leaves` array is not used again after it is modified. Based on the current implementation, this assumption has proven to be valid, as there are no further usages of the `leaves` array.
 
 ### 2. Fixed-size buffer and Assembly
 Using a fixed-size buffer instead of dynamically allocating memory can be more efficient in terms of gas usage. Also, the use of assembly code to load the left and right siblings into memory can be more efficient than using the `abi.encodePacked` function.
