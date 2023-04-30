@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "claimableUserDelayedWithdrawals sometimes returns unclaimable DelayedWithdrawals, so users will see incorrect data",
+  "issueId": 37,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/37"
+}
