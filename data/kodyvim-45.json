@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "kodyvim",
+  "risk": "3",
+  "title": "slasher cannot retrieve `QueueWithdrawal` struct parameters",
+  "issueId": 45,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/45"
+}
