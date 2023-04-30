@@ -25,5 +25,13 @@ b) EigenPodManager.createPod() and stake has duplication of logic related to, if
 instead, in the stake function could leverage hasPod() to check if pod does not exist, create one
 and then retreive the pod and stake on that pod.
   
+function stake(bytes calldata pubkey, bytes calldata signature, bytes32 depositDataRoot) external payable {
+      if(!hasPod(msg.sender)){
+         _deployPod()
+      }
+      
+      IEigenPod pod = ownerToPod[msg.sender];
+      pod.stake{value: msg.value}(pubkey, signature, depositDataRoot);
+    }
 
   
