@@ -91,10 +91,7 @@ The function `merkleizeSha256Optimized` provided below is an optimized version o
 | Median      | 10.82%   |
 | Maximum     | 14.25%   |
 
-These percentages show that `merkleizeSha256Optimized` provides a noticeable improvement over `merkleizeSha256`, with the largest improvement being in the maximum execution time. It's worth noting that these percentages are specific to the input data and the environment in which the functions were run, so they may vary in other contexts. Nonetheless, they give a rough idea of the performance improvement that can be expected from using the optimized version of the function.
-
-
-It should be noted that these percentages are specific to the input data and the environment in which the functions were run, so they may vary in other contexts. Nonetheless, these results give a rough idea of the performance improvement that can be expected from using the optimized version of the function. 
+ The data shows a significant increase in gas efficiency with the use of `merkleizeSha256Optimized` compared to `merkleizeSha256`. It's worth emphasizing that these results are influenced by the input data and execution environment, so the actual improvement may differ in other contexts. Nonetheless, the results provide valuable insight into the potential gas cost savings that can be achieved by leveraging the optimized version of the function.
 
 The test codes are the following:
 ```solidity
