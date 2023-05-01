@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "The Merkle tree creation inside the computePhase0Eth1DataRoot function is incorrect",
+  "issueId": 63,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/63"
+}
