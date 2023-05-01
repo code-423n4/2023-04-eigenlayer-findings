@@ -18,7 +18,12 @@ Using a fixed-size buffer instead of dynamically allocating memory can be more e
 
 The following `merkleizeSha256Optimized` is an optimized implementation of `merkleizeSha256` and it is adapted from the [Optimism's Lib_MerkleTree.sol](https://github.com/ethereum-optimism/optimism/blob/e6f1f61c569dbabffa2cfe6129e8e23a8646ffca/packages/contracts/contracts/libraries/utils/Lib_MerkleTree.sol#L13-L22):
 ```solidity
-    /// @dev `leaves` argument is modified, therefore it must not be used again afterwards.
+    /**
+     @notice Returns the merkle root of a tree created from a set of leaves using sha256 as its hash function
+     @param leaves the leaves of the merkle tree
+     @notice Requires the leaves.length is a power of 2.
+     @notice `leaves` argument is modified, therefore it must not be used again afterwards.
+     */
     function merkleizeSha256Optimized(
         bytes32[] memory leaves
     ) internal pure returns (bytes32) {
