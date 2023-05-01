@@ -76,11 +76,8 @@ The function `merkleizeSha256Optimized` provided below is an optimized version o
 
 ### Impact
 
-| test/Merkle.t.sol:MerkleMock contract |                 |        |        |         |         |
-|---------------------------------------|-----------------|--------|--------|---------|---------|
-| Deployment Cost                       | Deployment Size |        |        |         |         |
-| 342580                                | 1743            |        |        |         |         |
 | Function Name                         | min             | avg    | median | max     | # calls |
+|---------------------------------------|-----------------|--------|--------|---------|---------|
 | merkleizeSha256                       | 2353            | 274987 | 62975  | 1396167 | 10      |
 | merkleizeSha256Optimized              | 2136            | 238896 | 56158  | 1197190 | 10      |
 
