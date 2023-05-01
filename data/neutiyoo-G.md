@@ -3,8 +3,8 @@
 ### Description
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
 
-Currently, the [`merkleizeSha256` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153
-) is implemented correctly, but the following optimizations for can be made:
+Although the current implementation of the [`merkleizeSha256` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153
+) function is correct, it can be more gas-efficient by making use of the following optimizations:
 
 **1. In-place Computation**
 
