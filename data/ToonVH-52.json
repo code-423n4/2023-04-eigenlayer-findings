@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "ToonVH",
+  "risk": "2",
+  "title": "DelayedWithdrawalRouter constructor does not call _disableInitializers(), allowing an adversary to take over the implementation contract",
+  "issueId": 52,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/52"
+}
