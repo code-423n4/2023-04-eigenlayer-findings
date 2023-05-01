@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "martin",
+  "risk": "2",
+  "title": "Authorization functionality can easily get in a state of DoS forever",
+  "issueId": 68,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/68"
+}
