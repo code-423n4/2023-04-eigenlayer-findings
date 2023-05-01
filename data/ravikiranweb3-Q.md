@@ -34,4 +34,5 @@ function stake(bytes calldata pubkey, bytes calldata signature, bytes32 depositD
       pod.stake{value: msg.value}(pubkey, signature, depositDataRoot);
     }
 
+c) Use of Assembly needs special review as it bypasses solidity compiler. 
   
