@@ -1,0 +1,1 @@
+            on StateRootConfirmed(blockNumber, stateRoot);
