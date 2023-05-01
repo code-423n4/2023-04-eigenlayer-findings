@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "J4de",
+  "risk": "3",
+  "title": "`EigenPod.sol#verifyWithdrawalCredentialsAndBalance` function signature can be replayed to get more shares",
+  "issueId": 57,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/57"
+}
