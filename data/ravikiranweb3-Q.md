@@ -35,4 +35,6 @@ function stake(bytes calldata pubkey, bytes calldata signature, bytes32 depositD
     }
 
 c) Use of Assembly needs special review as it bypasses solidity compiler. 
+
+d) The code of Pausable contract is has variable, event, function with same names. A naming convention to differentiate would be helpful.
   
