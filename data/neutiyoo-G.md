@@ -137,6 +137,3 @@ contract MerkleTest is Test {
 
 ### Recommendation
 Consider optimizing `merkleizeSha256` by using in-place computation and assembly.
-
-
-
