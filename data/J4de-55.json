@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "J4de",
+  "risk": "2",
+  "title": "`StrategyBase.sol#deposit` function can only deposit an amount less than the current balance",
+  "issueId": 55,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/55"
+}
