@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "matrix_0wl",
+  "risk": "2",
+  "title": "Unprotected initializer in proxy-based upgradeable contract",
+  "issueId": 74,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/74"
+}
