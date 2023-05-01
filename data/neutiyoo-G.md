@@ -10,15 +10,16 @@ Although the current implementation of the [`merkleizeSha256` function](https://
 
 The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. 
 
-Note that this optimization requires that the `leaves` array not be used again after it is modified. Based on the current implementation, this optimization is valid, as there are no further usages of the `leaves` array.
+Note that this optimization requires that the `leaves` array not be used again after it is modified. Based on the current implementation, this optimization is valid. It's because there are no further usages of the `leaves` array.
 
 **2. Assembly**
 The use of assembly code to load the left and right siblings into memory is more gas-efficient than using the `abi.encodePacked` function.
 
 **3. Unchecked Arithmetic**
-The use of unchecked arithmetic is more gas-efficient because it skips checks for overflow or underflow.
+The use of unchecked arithmetic is more gas-efficient as it skips checks for overflow or underflow.
 
-This is a valid optimization, as it's highly unlikely that `numNodesInLayer` would overflow.
+This optimization for `uint i` is safe because overflow is impossible.
+
 
 ### Proof of Concept
 
