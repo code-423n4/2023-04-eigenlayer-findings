@@ -8,9 +8,9 @@ Although the current implementation of the [`merkleizeSha256` function](https://
 
 **1. In-place Computation**
 
-The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. 
+The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. Note that this optimization requires that the `leaves` array not be used again after it is modified. 
 
-Note that this optimization requires that the `leaves` array not be used again after it is modified. Based on the current implementation, this optimization is valid. It's because there are no further usages of the `leaves` array.
+Based on the current implementation, this optimization is valid. It's because there are no further usages of the `leaves` array.
 
 **2. Assembly**
 The use of assembly code to load the left and right siblings into memory is more gas-efficient than using the `abi.encodePacked` function.
@@ -74,7 +74,7 @@ The function `merkleizeSha256Optimized` provided below is an optimized version o
     }
 ```
 
-### Impact
+**Impact**
 
 | Function Name                         | min             | avg    | median | max     | # calls |
 |---------------------------------------|-----------------|--------|--------|---------|---------|
