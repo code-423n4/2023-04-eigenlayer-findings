@@ -7,7 +7,8 @@ Currently, the [`merkleizeSha256` function](https://github.com/code-423n4/2023-0
 ) is implemented correctly, but the following optimizations for can be made:
 
 **1. In-place Computation**
-The pairwise hashes can be computed in-place using a buffer, eliminating the need for creating new arrays to store intermediate hashes at each level of the Merkle tree. This reduces memory usage and gas costs.
+
+The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs.
 
 This optimization requires that the `leaves` array is not used again after it is modified. Based on the current implementation, this assumption has proven to be valid, as there are no further usages of the `leaves` array.
 
@@ -135,7 +136,7 @@ contract MerkleTest is Test {
 ```
 
 ### Recommendation
-Consider using a fixed-size buffer to compute the pairwise hashes in-place and updates the input array with the result. This eliminates the need for creating new arrays and reduces the number of iterations needed to compute the final Merkle root. As a result, it is more gas-efficient and performs better for large inputs.
+Consider optimizing `merkleizeSha256` by using in-place computation and assembly.
 
 
 
