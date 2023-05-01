@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "volodya",
+  "risk": "2",
+  "title": "User can stake twice on beacon chain from same eipod thus losing funds due to same withdrawal credentials",
+  "issueId": 54,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/54"
+}
