@@ -2,15 +2,11 @@ Report contents changed:  # LOW FINDINGS
 
 | LOW COUNT| ISSUES | INSTANCES|
 |-------|-----|--------|
-| [L-1]| Use abi.encode to convert safest way from uint values to bytes  | 3 |
-| [L-2]| Loss of precision due to rounding | 1 |
-| [L-3]| Consider using OpenZeppelin’s SafeCast library to prevent unexpected overflows when casting from uint256  | 11 |
-| [L-4]| MIXING AND OUTDATED COMPILER  | 7 |
-| [L-5]| abi.encodePacked() should not be used with dynamic types when passing the result to a hash function such as keccak256()  | 7 |
-| [L-6]| Lack of Sanity/Threshold/Limit Checks  | 2 |
-| [L-7]| Function Calls in Loop Could Lead to Denial of Service | 10 |
-| [L-8]| Project Upgrade and Stop Scenario should be  | - |
-| [L-9]| Front running attacks by the onlyOwner  | 3 |
+| [L-1]| MIXING AND OUTDATED COMPILER  | 6 |
+| [L-2]| Lack of Sanity/Threshold/Limit Checks  | 2 |
+| [L-3]| Function Calls in Loop Could Lead to Denial of Service |  |
+| [L-4]| Project Upgrade and Stop Scenario should be  |  |
+| [L-5]| Front running attacks by the onlyOwner  |  |
 | [L-10]| Use BytesLib.sol library to safely covert bytes to uint256  | 2 |
 | [L-11]| Avoid infinite loops whenever possible  | 2 |
 | [L-12]| In the constructor, there is no return of incorrect address identification  | 6 |
@@ -49,39 +45,11 @@ Report contents changed:  # LOW FINDINGS
 
 ##
 
-## [L-1] Use abi.encode to convert safest way from uint values to bytes
+## [L-1] OUTDATED COMPILER
 
-### DRAWBACKS
-Now the protocol uses direct conversion way this is not safe. bytes(value) to convert a uint to bytes is not considered a safe way because it creates an uninitialized byte array of length. This means that the contents of the byte array are undefined and may contain sensitive data from previous memory usage, which could result in security vulnerabilities.
+The pragma version used are: 0.8.12
 
-### BENIFITS of abi.encode
-
-In Solidity, the safest way to convert a uint to bytes is to use the abi.encode function. This function will encode the uint as a byte array using the ABI encoding rules, which ensures that the output is a deterministic and standardized representation of the uint value.
-
-```solidity
-
-```
-
-
-```solidity
-
-
-```
-
-
-##
-
-
-##
-
-
-##
-
-## [L-4] MIXING AND OUTDATED COMPILER
-
-The pragma version used are: 0.8.0
-
-The minimum required version must be 0.8.17; otherwise, contracts will be affected by the following important bug fixes:
+The minimum required version must be 0.8.19; otherwise, contracts will be affected by the following important bug fixes:
 
 0.8.14:
 
@@ -102,15 +70,36 @@ Yul Optimizer: Prevent the incorrect removal of storage writes before calls to Y
 Apart from these, there are several minor bug fixes and improvements
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+2: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+3: pragma solidity =0.8.12;
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+2: pragma solidity =0.8.12;
 
 ```
 ##
 
-## [L-6] Lack of Sanity/Threshold/Limit Checks
+## [L-2] Lack of Sanity/Threshold/Limit Checks
 
 Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation as well as zero address checks for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
-
-
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -151,12 +140,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 ```
 [EigenPodManager.sol#L127-L130](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L127-L130)
 
-
-
-
 ##
 
-## [L-7] Function Calls in Loop Could Lead to Denial of Service
+## [L-3] Function Calls in Loop Could Lead to Denial of Service
 
 Function calls made in unbounded loop are error-prone with potential resource exhaustion as it can trap the contract due to the gas limitations or failed transactions
 
@@ -179,13 +165,10 @@ Function calls made in unbounded loop are error-prone with potential resource ex
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L609-L617
 
-```solidity
-
-```
 
 ##
 
-## [L-8] Project Upgrade and Stop Scenario should be
+## [L-4] Project Upgrade and Stop Scenario should be
 
 At the start of the project, the system may need to be stopped or upgraded, I suggest you have a script beforehand and add it to the documentation. This can also be called an ” EMERGENCY STOP (CIRCUIT BREAKER) PATTERN “.
 
@@ -194,7 +177,7 @@ https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.s
 
 ##
 
-## [L-9] Front running attacks by the onlyOwner
+## [L-5] Front running attacks by the onlyOwner
 
 
 ```solidity
@@ -212,33 +195,9 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```solidity
 
 ```
-
 ##
 
-## [L-10] Use BytesLib.sol library to safely covert bytes to uint256
-
-Use [toUint256()](https://github.com/GNSPS/solidity-bytes-utils/blob/master/contracts/BytesLib.sol) safely convert bytes to uint256 instead of plain way of conversion
-
-```solidity
-
-```
-
-##
-
-## [L-11] Avoid infinite loops whenever possible
-
-```solidity
-
-```
-
-
-```solidity
-
-```
-
-##
-
-## [L-13] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
+## [L-6] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
 
 It's still good practice to apply the reentry model as a precautionary measure in case the code is changed in the future to remove the onlyOwner modifier or the contract is used as a base contract for other contracts.
 
@@ -270,7 +229,7 @@ Recommended Mitigation:
 
 ##
 
-## [L-14] initialize() functions could be front run 
+## [L-7] initialize() functions could be front run 
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -318,81 +277,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [L-15] INITIALIZE() FUNCTION CAN BE CALLED BY ANYBODY
-
-initialize() function can be called anybody when the contract is not initialized.
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
-
-146: function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
-        external
-        initializer
-
-```
-[StrategyManager.sol#L146-L148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L146-L148)
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
-
-51: function initialize(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) public virtual initializer {
-        _initializeStrategyBase(_underlyingToken, _pauserRegistry);
-    }
-
-```
-[StrategyBase.sol#L51-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L51-L53)
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
-
-152: function initialize(address _podOwner) external initializer {
-
-```
-[EigenPod.sol#L152](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L152)
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
-
-function initialize(
-        IBeaconChainOracle _beaconChainOracle,
-        address initialOwner,
-        IPauserRegistry _pauserRegistry,
-        uint256 _initPausedStatus
-    ) external initializer {
-
-
-```
-[EigenPodManager.sol#L84-L89](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L84-L89)
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
-
-function initialize(
-        IBeaconChainOracle _beaconChainOracle,
-        address initialOwner,
-        IPauserRegistry _pauserRegistry,
-        uint256 _initPausedStatus
-    ) external initializer {
-
-
-```
-[EigenPodManager.sol#L84-L89](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L84-L89)
-
-https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L49
-
-
-
-Recommended Mitigation Steps
-
-Add a control that makes initialize() only call the Deployer Contract;
-
-if (msg.sender != DEPLOYER_ADDRESS) {
-						revert NotDeployer();
-				}
-
-##
-
-## [L-16] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
+## [L-8] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
 
 See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
 
@@ -407,7 +292,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ##
 
-## [L-17] Prevent division by 0
+## [L-8] Prevent division by 0
 
 On several locations in the code precautions are not being taken for not dividing by 0, this will revert the code.
 These functions can be called with 0 value in the input, this value is not checked for being bigger than 0, that means in some scenarios this can potentially trigger a division by zero
@@ -422,7 +307,7 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 
 ##
 
-## [L-18] Missing Event for critical parameters init and change
+## [L-10] Missing Event for critical parameters init and change
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
@@ -457,7 +342,7 @@ Add Event-Emit
 
 ##
 
-## [L-19] Use right way to convert bytes to bytes32 
+## [L-11] Use right way to convert bytes to bytes32 
 
 If _podWithdrawalCredentials() returns a value of type bytes, then using bytes32(_podWithdrawalCredentials()) to convert it to a bytes32 variable is not the correct way to do it.
 
@@ -480,9 +365,58 @@ bytes32 podWithdrawalCreds32 = bytes32(uint256(abi.encodePacked(podWithdrawalCre
 
 ```
 
+##
+
+## [L-12] Owner can renounce the ownership 
+
+# Description:
+Typically, the contract’s owner is the account that deploys the contract. As a result, the owner is able to perform certain privileged activities.
+
+The StakeHouse Ownable used in this project contract implements renounceOwnership. This can represent a certain risk if the ownership is renounced for any other reason than by design. Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner.
+
+```solidity
+
+File: lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol
+
+66       function renounceOwnership() public virtual onlyOwner {
+67           _transferOwnership(address(0));
+68:      }
 
 
- 
+```
+https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol#L66-L68
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+7: import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
+
+```
+[StrategyManager.sol#L7](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L7)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+9: import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
+
+```
+[EigenPodManager.sol#L9](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L9)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+5: import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+5: import "@openzeppelin-upgrades/contracts/access/OwnableUpgradeable.sol";
+
+```
+
+### Recommended Mitigation:
+
+We recommend to either reimplement the function to disable it or to clearly specify if it is part of the contract design
+
 
 ##
 
@@ -499,8 +433,6 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
 47: IDelayedWithdrawalRouter public immutable delayedWithdrawalRouter;
 50: IEigenPodManager public immutable eigenPodManager;
 
-
-
 ```
 [EigenPod.sol#L44](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L44)
 
@@ -513,7 +445,6 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 49: ISlasher public immutable slasher;
 52: IBeaconChainOracle public beaconChainOracle;
 
-
 ```
 [EigenPodManager.sol#L40](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L40)
 
@@ -521,16 +452,22 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 ### Recommended Mitigation
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+- 44: IETHPOSDeposit public immutable ethPOS;
++ 44: IETHPOSDeposit public immutable ETHPOS;
 
 ```
-
-
 
 ##
 
 ## [NC-2] Missing NATSPEC
 
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L104-L122
 
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L76-L93
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/PauserRegistry.sol#L17-L29
 
 ##
 
@@ -544,9 +481,13 @@ internal and private functions : the mixedCase format starting with an underscor
 ```solidity
 
 130: function computePhase0BeaconBlockHeaderRoot(bytes32[NUM_BEACON_BLOCK_HEADER_FIELDS] calldata blockHeaderFields) internal pure returns(bytes32) {
+
 140: function computePhase0BeaconStateRoot(bytes32[NUM_BEACON_STATE_FIELDS] calldata beaconStateFields) internal pure returns(bytes32) {
+
 150: function computePhase0ValidatorRoot(bytes32[NUM_VALIDATOR_FIELDS] calldata validatorFields) internal pure returns(bytes32) {  
+
 160: function computePhase0Eth1DataRoot(bytes32[NUM_ETH1_DATA_FIELDS] calldata eth1DataFields) internal pure returns(bytes32) {  
+
 178: function getBalanceFromBalanceRoot(uint40 validatorIndex, bytes32 balanceRoot) internal pure returns (uint64) {
 
 192: function verifyValidatorFields(
@@ -573,7 +514,7 @@ internal and private functions : the mixedCase format starting with an underscor
 ```
 [BeaconChainProofs.sol#L130](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L130)
 
-
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Endian.sol#L5-L7
 
 ##
 
@@ -602,28 +543,10 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ##
 
-## [NC-5] Remove commented out code
-
-
-```solidity
-
-
-```
-
 
 ##
 
-## [NC-6] Inconsistent method of specifying a floating pragma
-
-Some files use >=, some use ^. The instances below are examples of the method that has the fewest instances for a specific version. Note that using >= without also specifying <= will lead to failures to compile, or external project incompatability, when the major version changes and there are breaking-changes, so ^ should be preferred regardless of the instance counts
-
-```solidity
-
-
-```
-##
-
-## [NC-7] NO SAME VALUE INPUT CONTROL
+## [NC-5] NO SAME VALUE INPUT CONTROL
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -635,6 +558,46 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
 
+```solidity
+
+File: src/contracts/pods/DelayedWithdrawalRouter.sol
+
+100      function setWithdrawalDelayBlocks(uint256 newValue) external onlyOwner {
+101          _setWithdrawalDelayBlocks(newValue);
+102:     }
+https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/DelayedWithdrawalRouter.sol#L100-L102
+
+```
+
+```solidity
+File: src/contracts/pods/EigenPodManager.sol
+
+161      function updateBeaconChainOracle(IBeaconChainOracle newBeaconChainOracle) external onlyOwner {
+162          _updateBeaconChainOracle(newBeaconChainOracle);
+163:     }
+https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/EigenPodManager.sol#L161-L163
+
+```
+
+```solidity
+
+```
+
+```solidity
+
+```
+
+```solidity
+
+```
+
+```solidity
+
+```
+
+```solidity
+
+```
 ##
 
 ## [NC-9] According to the syntax rules, use => mapping ( instead of => mapping( using spaces as keyword
