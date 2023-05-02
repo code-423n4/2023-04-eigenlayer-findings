@@ -155,7 +155,9 @@ The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in
 for (uint256 i = 32; i <= proof.length; i+=32) {
 ```
 
-This is not gas-efficient. It's because based on the current implementation, overflow is not possible as the length of proof is validated before calling `processInclusionProofSha256` and `processInclusionProofKeccak` functions.
+By using unchecked arithmetic, the gas cost of executing these functions can be reduced.
+
+This optimization is safe because based on the current implementation, overflow is not possible as the length of proof is validated before the function call.
 
 ### Recommendation
 
