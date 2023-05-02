@@ -1,3 +1,14 @@
+## [L-01] Missing array length check in `queueWithdrawal` function
+**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+### Description
+
+The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329
+) function in StrategyManager.sol does not validate the length of the `strategyIndexes` input argument.
+
+### Recommendation
+Consider checking the length of the `strategyIndexes` argument.
+
+
 ## [N-01] Misleading comments in `Merkle.sol`
 
 ## Description
