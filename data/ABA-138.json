@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "ABA",
+  "risk": "2",
+  "title": "Pausing because of an exploited or malfunctioning pod also pauses/blocks all withdrawals from all strategies",
+  "issueId": 138,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/138"
+}
