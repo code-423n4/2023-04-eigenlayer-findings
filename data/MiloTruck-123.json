@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "MiloTruck",
+  "risk": "2",
+  "title": "Lack of validation allows users to queue withdrawals that cannot be completed",
+  "issueId": 123,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/123"
+}
