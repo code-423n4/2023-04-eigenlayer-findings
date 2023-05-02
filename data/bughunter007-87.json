@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "bughunter007",
+  "risk": "2",
+  "title": "Possible failure of withdrawls due to malicious strategies. Erroneous input to slashQueuedWithdrawal function will permanently lock the tokens in strategies.",
+  "issueId": 87,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/87"
+}
