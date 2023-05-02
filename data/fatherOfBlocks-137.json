@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "fatherOfBlocks",
+  "risk": "2",
+  "title": "Front running attack in initialize() funcion",
+  "issueId": 137,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/137"
+}
