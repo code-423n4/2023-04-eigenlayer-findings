@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "MiloTruck",
+  "risk": "3",
+  "title": "Queued withdrawals with malicious strategies cannot be slashed due to error in `slashQueuedWithdrawal()`",
+  "issueId": 119,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/119"
+}
