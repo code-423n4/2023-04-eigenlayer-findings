@@ -28,70 +28,7 @@
 
 ## APROXIMATE GAS SAVED: 
 
-##
-
-## [G-1] State variable value only set in the constructor can be declared as a constants to save large volume of the gas
-
-> Instances ()
-
-> Approximate Gas Saved : 
-
-gatewayURL string variable value is only set inside the constructor. The value is not changed anywhere inside the contract. This gatewayURL can be declared as constant to save large volume of gas
-
-As per [Remix gas test](https://gist.github.com/sathishpic22/0079888aca5a6fe626b74f0063546138) approximately possible to saves 90000 gas
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-
-##
-
-## [G-2] State variables only set in the constructor should be declared immutable
-
-> Instances()
-
-> Approximate Gas saved : 
-
-Avoids a Gsset (20000 gas) in the constructor, and replaces the first access in each transaction (Gcoldsload - 2100 gas) and each access thereafter (Gwarmacces - 100 gas) with a PUSH32 (3 gas).
-
-While strings are not value types, and therefore cannot be immutable/constant if not hard-coded outside of the constructor, the same behavior can be achieved by making the current contract abstract with virtual functions for the string accessors, and having a child contract override the functions with the hard-coded implementation-specific values
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-```solidity
-
-```
-
-
-
-## [G-3] Using storage instead of memory for structs/arrays saves gas
+## [G-1] Using storage instead of memory for structs/arrays saves gas
 
 > Instances()
 
@@ -145,25 +82,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ##
 
-## [G-4] Structs can be packed into fewer storage slots
-
-> Instances ()
-
-> Aproximate Gas Saved: 
-
-As the solidity EVM works with 32 bytes, variables less than 32 bytes should be packed inside a struct so that they can be stored in the same slot, this saves gas when writing to storage ~20000 gas
-
-For offset,rdataOffset,nextOffset variables uint128 alone enough. So we can avoid 2 slots (40000 gas )
-
-```solidity
-
-
-```
-
-
-##
-
-## [G-5] For events use 3 indexed rule to save gas
+## [G-2] For events use 3 indexed rule to save gas
 
 > Instances()
 
@@ -233,7 +152,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ##
 
-## [G-6] Lack of input value checks cause a redeployment if any human/accidental errors
+## [G-3] Lack of input value checks cause a redeployment if any human/accidental errors
 
 > Instances()
 
@@ -267,20 +186,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 [EigenPodManager.sol#L77-L80](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L77-L80)
 
 
-```solidity
-
-```
-
-
-```solidity
-
-
-```
-
-
 ##
 
-## [G-7] Use nested if and, avoid multiple check combinations
+## [G-4] Use nested if and, avoid multiple check combinations
 
 > Instances()
 
@@ -298,14 +206,9 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 [StrategyManager.sol#L422](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L422)
 
 
-```solidity
-
-```
-
-
 ##
 
-## [G-8] Unnecessary look up in if condition
+## [G-5] Unnecessary look up in if condition
 
 > Instances()
 
@@ -329,40 +232,14 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 139: require(updatedTotalShares >= MIN_NONZERO_TOTAL_SHARES || updatedTotalShares == 0,
             "StrategyBase.withdraw: updated totalShares amount would be nonzero but below MIN_NONZERO_TOTAL_SHARES");
 
+198: if (tokenBalance == 0 || totalShares == 0) {
+
 ```
 [StrategyBase.sol#L139-L140](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L139-L140)
 
-
-```solidity
-
-```
-
-
-```solidity
-
-
-```
-
-
 ##
 
-
-## [G-9] Don't declare the variable inside the loops
-
-> Instances()
-
-In every iterations the new variables instance created this will consumes more gas . So just declare variables outside the loop and only use inside to save gas
-
-```solidity
-
-```
-
-
-
-
-##
-
-## [G-10] Functions should be used instead of modifiers to save gas
+## [G-6] Functions should be used instead of modifiers to save gas
 
 > Instances()
 
@@ -413,7 +290,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [G-11] Sort Solidity operations using short-circuit mode
+## [G-7] Sort Solidity operations using short-circuit mode
 
 > Instances()
 
@@ -430,24 +307,40 @@ f(x) && g(y)
 ```
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+761: require(queuedWithdrawal.withdrawalStartBlock + withdrawalDelayBlocks <= block.number 
+                || queuedWithdrawal.strategies[0] == beaconChainETHStrategy,
+            "StrategyManager.completeQueuedWithdrawal: withdrawalDelayBlocks period has not yet passed"
+        );
 
 ```
+[StrategyManager.sol#L761-L764](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L761-L764)
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+139: require(updatedTotalShares >= MIN_NONZERO_TOTAL_SHARES || updatedTotalShares == 0,
+            "StrategyBase.withdraw: updated totalShares amount would be nonzero but below MIN_NONZERO_TOTAL_SHARES");
 
 ```
-
-
+[StrategyBase.sol#L139-L140](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L139-L140)
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
+56: require(
+            address(pauserRegistry) == address(0) && address(_pauserRegistry) != address(0),
+            "Pausable._initializePauser: _initializePauser() can only be called once"
+        );
 
 ```
+[Pausable.sol#L56-L59](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L56-L59)
 
 ##
 
-## [G-12] Use assembly to check for address(0)
+## [G-8] Use assembly to check for address(0)
 
 > Instances()
 
@@ -484,28 +377,35 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
 [EigenPod.sol#L153](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L153)
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/PauserRegistry.sol
+
+42: require(newPauser != address(0), "PauserRegistry._setPauser: zero address input");
+48: require(newUnpauser != address(0), "PauserRegistry._setUnpauser: zero address input");
+
+```
+[PauserRegistry.sol#L42](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/PauserRegistry.sol#L42)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+57: address(pauserRegistry) == address(0) && address(_pauserRegistry) != address(0),
+
+```
+[Pausable.sol#L57](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L57)
+
+
+```solidity
 FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
-
-
-```
-
-
-
-```solidity
-
+45: require(address(_eigenPodManager) != address(0), "DelayedWithdrawalRouter.constructor: _eigenPodManager cannot be zero address");
 
 ```
-
-
-```solidity
-
-```
+[DelayedWithdrawalRouter.sol#L45](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L45)
 
 
 ##
 
-## [G-13] Shorthand way to write if / else statement can reduce the deployment cost
+## [G-9] Shorthand way to write if / else statement can reduce the deployment cost
 
 > Instances()
 
@@ -589,23 +489,71 @@ Address.isContract(staker : require(IERC1271(staker).isValidSignature(digestHash
 
 ```
 
-
 ##
 
-## [G-14] The Less gas consuming condition checks should be on top
+## [G-10] Less gas consuming condition checks should be on top
 
 > Instances()
 
 When writing conditional statements in smart contracts, it is generally best practice to order the conditions so that the less gas-consuming checks are performed first. This can help to optimize the gas usage of the contract and improve its overall efficiency
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
++ 360: require(strategies.length == 1,
+                    "StrategyManager.queueWithdrawal: cannot queue a withdrawal including Beacon Chain ETH
+-360: require(withdrawer == msg.sender,
+                    "StrategyManager.queueWithdrawal: cannot queue a withdrawal of Beacon Chain ETH to a different address");
+- 361: require(strategies.length == 1,
+                    "StrategyManager.queueWithdrawal: cannot queue a withdrawal including Beacon Chain ETH and other tokens");
++ 360: require(withdrawer == msg.sender,
+                    "StrategyManager.queueWithdrawal: cannot queue a withdrawal of Beacon Chain ETH to a
+
++ 631: require(shares != 0, "StrategyManager._addShares: shares should not be zero!");
+- 631: require(depositor != address(0), "StrategyManager._addShares: depositor cannot be zero address");
+- 632: require(shares != 0, "StrategyManager._addShares: shares should not be zero!");
++ 632: require(depositor != address(0), "StrategyManager._addShares: depositor cannot be zero address");
+
++ 684: require(shareAmount != 0, "StrategyManager._removeShares: shareAmount should not be zero!");
+- 684: require(depositor != address(0), "StrategyManager._removeShares: depositor cannot be zero address");
+- 685: require(shareAmount != 0, "StrategyManager._removeShares: shareAmount should not be zero!");
++ 685: require(depositor != address(0), "StrategyManager._removeShares: depositor cannot be zero address");
+
+750: require(
+            withdrawalRootPending[withdrawalRoot],
+            "StrategyManager.completeQueuedWithdrawal: withdrawal is not pending"
+        );
+
++ 766: require(
+            msg.sender == queuedWithdrawal.withdrawerAndNonce.withdrawer,
+            "StrategyManager.completeQueuedWithdrawal: only specified withdrawer can complete a queued withdrawal"
+        );
+
+755: require(
+            slasher.canWithdraw(queuedWithdrawal.delegatedAddress, queuedWithdrawal.withdrawalStartBlock, middlewareTimesIndex),
+            "StrategyManager.completeQueuedWithdrawal: shares pending withdrawal are still slashable"
+        );
+
+        // enforce minimum delay lag (not applied to withdrawals of 'beaconChainETH', since the EigenPods enforce their own delay)
+761: require(queuedWithdrawal.withdrawalStartBlock + withdrawalDelayBlocks <= block.number 
+                || queuedWithdrawal.strategies[0] == beaconChainETHStrategy,
+            "StrategyManager.completeQueuedWithdrawal: withdrawalDelayBlocks period has not yet passed"
+        );
+
+- 766: require(
+            msg.sender == queuedWithdrawal.withdrawerAndNonce.withdrawer,
+            "StrategyManager.completeQueuedWithdrawal: only specified withdrawer can complete a queued withdrawal"
+        );
 
 ```
+[StrategyManager.sol#L360-L363](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L360-L363)
+
+
 
 
 ##
 
-## [G-15] internal functions not called by the contract should be removed to save deployment gas
+## [G-11] internal functions not called by the contract should be removed to save deployment gas
 
 > Instances()
 
@@ -613,12 +561,52 @@ If the functions are required by an interface, the contract should inherit from 
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+55: function _initializePauser(IPauserRegistry _pauserRegistry, uint256 initPausedStatus) internal {
 
 ```
+[permissions/Pausable.sol#L55](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L55)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
+
+245: function verifyWithdrawalProofs(
+        bytes32 beaconStateRoot,
+        WithdrawalProofs calldata proofs,
+        bytes32[] calldata withdrawalFields
+    ) internal view {
+
+221: function verifyValidatorBalance(
+        uint40 validatorIndex,
+        bytes32 beaconStateRoot,
+        bytes calldata proof,
+        bytes32 balanceRoot
+    ) internal view {
+
+192: function verifyValidatorFields(
+        uint40 validatorIndex,
+        bytes32 beaconStateRoot,
+        bytes calldata proof, 
+        bytes32[] calldata validatorFields
+    ) internal view {
+
+178: function getBalanceFromBalanceRoot(uint40 validatorIndex, bytes32 balanceRoot) internal pure returns (uint64) {
+
+160: function computePhase0Eth1DataRoot(bytes32[NUM_ETH1_DATA_FIELDS] calldata eth1DataFields) internal pure returns(bytes32) {  
+
+150: function computePhase0ValidatorRoot(bytes32[NUM_VALIDATOR_FIELDS] calldata validatorFields) internal pure returns(bytes32) {  
+
+140: function computePhase0BeaconStateRoot(bytes32[NUM_BEACON_STATE_FIELDS] calldata beaconStateFields) internal pure returns(bytes32) {
+
+130: function computePhase0BeaconBlockHeaderRoot(bytes32[NUM_BEACON_BLOCK_HEADER_FIELDS] calldata blockHeaderFields) internal pure returns(bytes32) {
+
+```
+[BeaconChainProofs.sol#L245-L249](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L245-L249)
 
 ##
 
-## [G-16] Modifiers or private functions only called once can be inlined to save gas
+## [G-12] Modifiers or private functions only called once can be inlined to save gas
 
 Instances ()
 
@@ -634,14 +622,34 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
 
+99:  modifier onlyEigenPodManager {
+109: modifier onlyNotFrozen {
+114: modifier hasNeverRestaked {
 
 ```
+[EigenPod.sol#L99](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L99)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+39: modifier onlyEigenPod(address podOwner) {
+
+```
+[EigenPod.sol#L99](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L99)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+37: modifier onlyUnpauser() {
+
+```
+[Pausable.sol#L37](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L37)
 
 ##
 
-## [G-17] NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS
+## [G-13] NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS
 
 Instances ()
 
@@ -662,26 +670,30 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [G-18] Use constants instead of type(uintx).max
+## [G-14] Use constants instead of type(uintx).max
 
 Instances ():
 
 type(uint256).max it uses more gas in the distribution process and also for each transaction than constant usage
 
 ```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+82: _paused = type(uint256).max;
+83: emit Paused(msg.sender, type(uint256).max);
+23: uint256 constant internal PAUSE_ALL = type(uint256).max;
 
 ```
-
-
-```solidity
-
-
-```
-
+[Pausable.sol#L82-L83](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L82-L83)
 
 ##
 
 ## [G-20] Use assembly to assign address state variables 
+
+```solidity
+FILE: 
+
+```
 
 
 ##
@@ -995,6 +1007,28 @@ Prior to 0.8.10 the compiler inserted extra code, including EXTCODESIZE (100 gas
 Declare outside the loop and only use inside
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L142-L144
+
+##
+
+## [G-34] Remove unused modifiers code to reduce the deployment cost
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+43: modifier whenNotPaused() {
+        require(_paused == 0, "Pausable: contract is paused");
+        _;
+    }
+
+49: modifier onlyWhenNotPaused(uint8 index) {
+        require(!paused(index), "Pausable: index is paused");
+        _;
+    }
+
+```
+[Pausable.sol#L43-L52](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L43-L52)
+
+
 
 
 
