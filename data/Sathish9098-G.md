@@ -856,6 +856,15 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 
 The following functions could be set external to save gas and improve code quality. External call cost is less expensive than of public functions.
 
+```solidity
+File: src/contracts/pods/EigenPodManager.sol
+
+193:      function getPod(address podOwner) public view returns (IEigenPod) {
+
+[EigenPodManager.sol#L193](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/EigenPodManager.sol#L193)
+
+```
+
 ##
 
 ## [G-27] require() Should Be Used Instead Of assert()
