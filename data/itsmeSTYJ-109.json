@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "itsmeSTYJ",
+  "risk": "2",
+  "title": "[StrategyManager.sol 001] The inability to undo a queued withdrawal can lead to loss of funds for the users",
+  "issueId": 109,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/109"
+}
