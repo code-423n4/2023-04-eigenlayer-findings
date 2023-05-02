@@ -18,7 +18,7 @@ The use of assembly code to load the left and right siblings into memory is more
 **3. Unchecked Arithmetic**
 The use of unchecked arithmetic is more gas-efficient as it skips checks for overflow or underflow.
 
-This optimization for `uint i` is safe because overflow is impossible.
+This optimization for `uint i` is safe because of `i < numNodesInLayer`. Therefore, overflow is not possible.
 
 
 ### Proof of Concept
@@ -149,13 +149,13 @@ Consider optimizing `merkleizeSha256` by using in-place computation, assembly, a
 
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
 
-The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in `Merkle.sol` include arithmetic checks for incrementing `uint256 i` in a for-loop.
+The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in `Merkle.sol` include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop.
 
 ```solidity
 for (uint256 i = 32; i <= proof.length; i+=32) {
 ```
 
-This is not gas-efficient as overflow is impossible.
+This is not gas-efficient. It's because based on the current implementation, overflow is not possible as the length of proof is validated before calling `processInclusionProofSha256` and `processInclusionProofKeccak` functions.
 
 ### Recommendation
 
