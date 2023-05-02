@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "subhash",
+  "risk": "3",
+  "title": "function _initializePauser() is declared as internal and is never called within the Pasuable contract",
+  "issueId": 104,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/104"
+}
