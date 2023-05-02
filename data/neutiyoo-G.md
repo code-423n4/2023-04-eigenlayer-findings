@@ -157,6 +157,13 @@ for (uint256 i = 32; i <= proof.length; i+=32) {
 
 By using unchecked arithmetic, the gas cost of executing these functions can be reduced.
 
+```solidity
+unchecked {
+    i += 32;
+}
+```
+
+
 This optimization is safe because based on the current implementation, overflow is not possible as the length of proof is validated before the function call.
 
 ### Recommendation
