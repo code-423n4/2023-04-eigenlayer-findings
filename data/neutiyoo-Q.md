@@ -1,4 +1,4 @@
-## [L-01] Missing array length check in `queueWithdrawal` function
+## [L-01] Missing check for array length in `queueWithdrawal` function
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 ### Description
 
