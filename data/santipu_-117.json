@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "santipu_",
+  "risk": "2",
+  "title": "MIN_NONZERO_TOTAL_SHARES: A Critical Flaw Restricting Low-Precision Token Strategies (GUSD)",
+  "issueId": 117,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/117"
+}
