@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "matrix_0wl",
+  "risk": "2",
+  "title": "Solmate’s SafeTransferLib doesn’t check whether the ERC20 contract exists",
+  "issueId": 124,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/124"
+}
