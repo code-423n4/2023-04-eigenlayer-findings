@@ -23,4 +23,10 @@ uint length = arr.length;
 for (uint i = 0; i < length; i++) {
     // do something that doesn't change arr.length}
 
+ ++i costs less gas than i++, especially when it’s used in for-loops (--i/i-- too)
+
+        for(uint256 i = 0; i < queuedWithdrawals.length; i++) {
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L466
+
        
