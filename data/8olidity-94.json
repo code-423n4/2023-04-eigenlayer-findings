@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "8olidity",
+  "risk": "2",
+  "title": "When withdraw is suspended, slashQueuedWithdrawal also cannot be called",
+  "issueId": 94,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/94"
+}
