@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "fatherOfBlocks",
+  "risk": "2",
+  "title": "Possible DoS due to missing constructor validations",
+  "issueId": 134,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/134"
+}
