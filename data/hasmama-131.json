@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "hasmama",
+  "risk": "2",
+  "title": "Depositing zero amount can deplete gas resources",
+  "issueId": 131,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/131"
+}
