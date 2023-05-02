@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "MiloTruck",
+  "risk": "2",
+  "title": "Tokens with low decimals are incompatible with `StrategyBase` due to minimum share limit",
+  "issueId": 120,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/120"
+}
