@@ -141,3 +141,22 @@ contract MerkleTest is Test {
 
 ### Recommendation
 Consider optimizing `merkleizeSha256` by using in-place computation, assembly, and unchecked arithmetic.
+
+
+## [G-02] Use unchecked arithmetic in `processInclusionProofSha256` and `processInclusionProofKeccak` functions
+
+### Description
+
+**Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
+
+The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in `Merkle.sol` include arithmetic checks for incrementing `uint256 i` in a for-loop.
+
+```solidity
+for (uint256 i = 32; i <= proof.length; i+=32) {
+```
+
+This is not gas-efficient as overflow is impossible.
+
+### Recommendation
+
+Consider using unchecked arithmetic for `uint256 i`.
