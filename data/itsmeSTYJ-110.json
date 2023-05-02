@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "itsmeSTYJ",
+  "risk": "2",
+  "title": "[StrategyManager.sol 002] Malicious user is able to DoS other users from accessing the same strategy",
+  "issueId": 110,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/110"
+}
