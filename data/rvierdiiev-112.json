@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "rvierdiiev",
+  "risk": "3",
+  "title": "User will not be able to claim withdrawal for any strategy from queuedWithdrawal in case of any of them will not work",
+  "issueId": 112,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/112"
+}
