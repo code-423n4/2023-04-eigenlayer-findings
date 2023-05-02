@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "MiloTruck",
+  "risk": "2",
+  "title": "Attacker can grief withdrawals by forcing `_completeQueuedWithdrawal()` to revert",
+  "issueId": 122,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/122"
+}
