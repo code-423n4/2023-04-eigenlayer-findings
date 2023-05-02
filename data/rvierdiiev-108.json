@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "rvierdiiev",
+  "risk": "2",
+  "title": "StrategyManager._completeQueuedWithdrawal allows to deposit and bypass pausing of deposit",
+  "issueId": 108,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/108"
+}
