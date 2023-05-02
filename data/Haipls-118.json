@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Haipls",
+  "risk": "2",
+  "title": "`StrategyBased` takes into account the all balance at the moment `totalShares == 0` as the balance of the first staker",
+  "issueId": 118,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/118"
+}
