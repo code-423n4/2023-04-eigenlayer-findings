@@ -4,7 +4,7 @@
 
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
-If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) function is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+If the [`_removeStrategyFromStakerStrategyList` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) is called by the [`recordOvercommittedBeaconChainETH` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
 
 ### Proof of Concept
 
@@ -43,7 +43,7 @@ The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blo
     }
 ```
 
-It calls the following [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) function from OpenZeppelin `OwnableUpgradeable.sol`.
+It calls the following [`_transferOwnership` function](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) from OpenZeppelin `OwnableUpgradeable.sol`.
 
 ```solidity
     /**
