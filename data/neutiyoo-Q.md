@@ -1,4 +1,30 @@
-## [L-01] Missing check for array length in `queueWithdrawal` function
+## [L-01] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
+**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+
+### Description
+If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715
+) function is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+
+### Proof of Concept
+
+Change the value of `uint256 beaconChainETHStrategyIndex` from `0` to `42` in `StrategyManagerUnit.t.sol` as shown below:
+
+https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/StrategyManagerUnit.t.sol#L185
+```diff
+-uint256 beaconChainETHStrategyIndex = 0;
++uint256 beaconChainETHStrategyIndex = 42;
+```
+
+This modification will trigger the error as the following:
+```text
+[FAIL. Reason: Index out of bounds Counterexample: calldata=0x28bdd3e000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000003, args=[3, 3]] testRecordOvercommittedBeaconChainETHSuccessfully(uint256,uint256) (runs: 116, μ: 144482, ~: 144482)
+```
+
+### Recommendation
+
+Validate `uint256 strategyIndex` to avoid out-of-bounds access.
+
+## [L-02] Missing check for array length in `queueWithdrawal` function
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 ### Description
 
