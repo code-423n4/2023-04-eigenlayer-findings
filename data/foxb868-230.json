@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "foxb868",
+  "risk": "2",
+  "title": "Lack of Interface Implementation Check in depositIntoStrategyWithSignature Function.",
+  "issueId": 230,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/230"
+}
