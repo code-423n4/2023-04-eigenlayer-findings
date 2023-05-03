@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "2",
+  "title": "Unsafe downcasting arithmetic operation in EigenPod.sol: `withdrawRestakedBeaconChainETH()` function",
+  "issueId": 157,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/157"
+}
