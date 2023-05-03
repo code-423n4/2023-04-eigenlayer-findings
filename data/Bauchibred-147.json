@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "2",
+  "title": "StrategyManger.sol: `slashShares()` is susceptible to DOS/unexpected revert due to call to `_removeShares()`",
+  "issueId": 147,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/147"
+}
