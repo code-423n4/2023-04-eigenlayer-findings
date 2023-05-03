@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "foxb868",
+  "risk": "2",
+  "title": "Nonce Reset Not Possible in depositIntoStrategyWithSignature.",
+  "issueId": 234,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/234"
+}
