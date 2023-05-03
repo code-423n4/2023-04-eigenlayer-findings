@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "3",
+  "title": "Renouncing ownership or admin role could completely break the operation of protocol",
+  "issueId": 161,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/161"
+}
