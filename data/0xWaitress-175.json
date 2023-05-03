@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xWaitress",
+  "risk": "3",
+  "title": "withdrawer can collude with operator when withdrawal needs to be queued while slashing is instant",
+  "issueId": 175,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/175"
+}
