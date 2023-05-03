@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "juancito",
+  "risk": "2",
+  "title": "`queueWithdrawal` can be spammed by anyone without making a deposit",
+  "issueId": 209,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/209"
+}
