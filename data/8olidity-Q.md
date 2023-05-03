@@ -54,3 +54,19 @@ src/contracts/libraries/BeaconChainProofs.sol:
   100:     bytes8 internal constant UINT64_MASK = 0xffffffffffffffff; //@audit 
   101
 ```
+
+
+## code redundancy
+
+The `if` statement will never be executed, because the value of `ORIGINAL_CHAIN_ID` has been set to `block.chainid` in the constructor, so it is impossible for `block.chainid != ORIGINAL_CHAIN_ID`
+
+```solidity
+File: src/contracts/core/DelegationManager.sol
+if (block.chainid != ORIGINAL_CHAIN_ID) {
+            bytes32 domain_separator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), block.chainid, address(this)));//@audit 
+            digestHash = keccak256(abi.encodePacked("\x19\x01", domain_separator, structHash));
+        } else{
+            digestHash = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash));
+        }
+
+```
