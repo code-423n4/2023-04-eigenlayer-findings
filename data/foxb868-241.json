@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "foxb868",
+  "risk": "3",
+  "title": "CreateDelayedWithdrawal Function Does Not Verify Contract Balance.",
+  "issueId": 241,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/241"
+}
