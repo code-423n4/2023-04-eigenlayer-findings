@@ -56,23 +56,6 @@ Consider checking zero value for the `uint256 amount` argument.
 
 
 
-## [L-04] Missing check for zero address in the constructor of `PauserRegistry` contract
-
-### Description
-
-**Target**: [PauserRegistry.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/permissions/PauserRegistry.sol)
-
-
-The [constructor of `PauserRegistry`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/permissions/PauserRegistry.sol#L26
-) has no zero value check for the `address _pauser` and `address _unpauser` arguments.
-
-### Recommendation
-
-Consider checking zero address for the `address _pauser` and `address _unpauser` arguments.
-
-
-
-
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
 ### Description
