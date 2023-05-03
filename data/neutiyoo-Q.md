@@ -15,10 +15,10 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/Strateg
 
 ```diff
 -uint256 beaconChainETHStrategyIndex = 0;
-+uint256 beaconChainETHStrategyIndex = 42; // arbitrary number
++uint256 beaconChainETHStrategyIndex = 42; // an arbitrary number
 ```
 
-This modification will trigger the error as the following:
+This modification will trigger the following error:
 
 ```text
 [FAIL. Reason: Index out of bounds Counterexample: calldata=0x28bdd3e000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000003, args=[3, 3]] testRecordOvercommittedBeaconChainETHSuccessfully(uint256,uint256) (runs: 116, μ: 144482, ~: 144482)
@@ -26,7 +26,7 @@ This modification will trigger the error as the following:
 
 ### Recommendation
 
-Validate `uint256 strategyIndex` to avoid out-of-bounds access.
+Consider checking out-of-bounds access.
 
 ## [L-02] Missing zero address check for `address initOwner` in `initialize` function of `DelayedWithdrawalRouter` contract
 
@@ -35,7 +35,7 @@ Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
 ### Description
 
-The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of `DelayedWithdrawalRouter` contract has no zero value check for the `address initOwner`.
+The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of the `DelayedWithdrawalRouter` contract does not have a zero address check for the `address initOwner`.
 
 ```solidity
     function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
@@ -45,7 +45,7 @@ The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blo
     }
 ```
 
-It calls the following [`_transferOwnership` function](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) from OpenZeppelin `OwnableUpgradeable.sol`.
+The code calls the [`_transferOwnership` function](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
 
 ```solidity
     /**
@@ -59,11 +59,11 @@ It calls the following [`_transferOwnership` function](https://github.com/OpenZe
     }
 ```
 
-Note that this function also doesn't check zero address for `address newOwner`.
+Note that this function doesn't have a zero address check for the `address newOwner`.
 
 ### Recommendation
 
-Consider checking zero value for the `address initOwner` argument.
+Consider checking the zero value for the `address initOwner` argument.
 
 ## [L-03] Missing zero address check in the constructor of `EigenPodManager` contract
 
@@ -81,7 +81,7 @@ The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src
 
 ### Recommendation
 
-Consider checking zero address for the 4 constructor arguments.
+Consider checking the zero address for the four constructor arguments.
 
 ## [L-04] Missing zero address check in the constructor of `EigenPod` contract
 
@@ -90,7 +90,7 @@ Consider checking zero address for the 4 constructor arguments.
 
 ### Description
 
-The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) of `EigenPod` has no zero value check for the following arguments:
+The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) of `EigenPod` has no zero address check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
@@ -98,7 +98,7 @@ The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src
 
 ### Recommendation
 
-Consider checking zero address for the 3 constructor arguments.
+Consider checking the zero address for the three constructor arguments.
 
 ## [L-05] Missing zero value check in `deposit` function
 
@@ -111,7 +111,7 @@ The [`deposit` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/m
 
 ### Recommendation
 
-Consider checking zero value for the `uint256 amount` argument.
+Consider checking the zero value for the `uint256 amount` argument.
 
 ## [L-06] Missing array length check in `queueWithdrawal` function
 
@@ -133,17 +133,17 @@ Consider checking the length of the `uint256[] strategyIndexes` argument.
 
 ### Description
 
-Currently, the following comment for the `sharesToUnderlying` function is Misleading.
+The following comment for the `sharesToUnderlying` function is misleading:
 
 ```
 * @notice In contrast to `sharesToUnderlyingView`, this function **may** make state modifications
 ```
 
-It's because the `sharesToUnderlying` function has `view` modifier, indicating that it does not modify the state.
+The `sharesToUnderlying` function has a `view` modifier. Therefore, it does not modify the state.
 
 ### Recommendation
 
-Consider fixing the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
+Consider updating the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
 
 ## [N-02] Misleading comments for `Merkle` contract
 
@@ -152,7 +152,7 @@ Consider fixing the comment for `sharesToUnderlying` function to accurately refl
 
 ## Description
 
-There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle.sol`, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments doesn't reflect the changes.
+There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle.sol`, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
 
 ```diff
 /**
@@ -171,7 +171,7 @@ There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer
  */
 ```
 
-The above comments are incorrect as OpenZeppelin have defined [standard merkle trees](https://github.com/OpenZeppelin/merkle-tree/blob/7dbf9a11cd69a0cfabf9cca4dbae37d14d30e1a6/README.md#standard-merkle-trees) with the following characteristics:
+The above comments are incorrect as OpenZeppelin has defined [standard Merkle trees](https://github.com/OpenZeppelin/merkle-tree/blob/7dbf9a11cd69a0cfabf9cca4dbae37d14d30e1a6/README.md#standard-merkle-trees) with the following characteristics:
 
 - The tree is shaped as a [complete binary tree](https://xlinux.nist.gov/dads/HTML/completeBinaryTree.html).
 - The leaves are sorted.
@@ -181,4 +181,4 @@ The above comments are incorrect as OpenZeppelin have defined [standard merkle t
 
 ### Recommendation
 
-Consider updating the comments in `Merkle.sol` to accurately reflect the current implementation and removing any misleading information.
+Consider updating the comments in `Merkle.sol` to accurately reflect the current implementation.
