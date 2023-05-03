@@ -1,38 +1,52 @@
 # GAS OPTIMIZATION
 
+##
+
 | Gas Count| Issues| Instances| Gas Saved|
 |-------|-----|--------|--------|
-| [G-1] | State variable value only set in the constructor can be declared as a constants to save large volume of the gas   | 1 | 90000 |
-| [G-2] | State variables only set in the constructor should be declared immutable  | 1 | 20000 |
-| [G-3] | Using storage instead of memory for structs/arrays saves gas  | 3 | 6300 |
-| [G-4] | Structs can be packed into fewer storage slots  | 1 | | 
-| [G-5] | For events use 3 indexed rule to save gas  | 3 | - |
-| [G-6] | Lack of input value checks cause a redeployment if any human/accidental errors | 4 | - |
-| [G-7] | Use nested if and, avoid multiple check combinations  | 2 | 18 |
-| [G-8] | Unnecessary look up in if condition  | 7 | - |
-| [G-9] | Don't declare the variable inside the loops  | 3 | - |
-| [G-10] | Functions should be used instead of modifiers to save gas  | 1 | - |
-| [G-11] | Sort Solidity operations using short-circuit mode  | 5 | - |
-| [G-12] | Use assembly to check for address(0)  | 7 | 42 |
-| [G-13] | Shorthand way to write if / else statement can reduce the deployment cost| 4 | - |
-| [G-14] | The Less gas consuming condition checks should be on top  | 1 | - |
-| [G-15] | Internal functions not called by the contract should be removed to save deployment gas  | 3 | - |
-| [G-16] | Modifiers or private functions only called once can be inlined to save gas | 2 | 80 |
-| [G-17] | NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS  | 12 | - |
-| [G-18] | Use constants instead of type(uintx).max  | 5 | - |
-| [G-19] | Instead of calculating bytes32(0) every time inside the contract its possible to use constants to reduce the gas cost   | 1 | - |
+| [G-1] | Use uint256(1)/uint256(2) instead for true and false boolean states  | 7 | 140000 |
+| [G-2] | Using storage instead of memory for structs/arrays saves gas  | 11 | 23000 |
+| [G-3] | For events use 3 indexed rule to save gas  | 18 | - |
+| [G-4] | Lack of input value checks cause a redeployment if any human/accidental errors  | 3 |- | 
+| [G-5] | Use nested if and, avoid multiple check combinations  | 2 | - |
+| [G-6] | Unnecessary look up in if condition | 3 | - |
+| [G-7] | Functions should be used instead of modifiers to save gas  | 7 | - |
+| [G-8] | Sort Solidity operations using short-circuit mode  | 3 | - |
+| [G-9] | Use assembly to check for address(0) | 12 | 72 |
+| [G-10] | Shorthand way to write if / else statement can reduce the deployment cost  | 7 | - |
+| [G-11] | Less gas consuming condition checks should be on top  | 4 | - |
+| [G-12] | internal functions not called by the contract should be removed to save deployment gas  | 9 | - |
+| [G-13] | Modifiers or private functions only called once can be inlined to save gas | 6 | - |
+| [G-14] | NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS  | 2 | - |
+| [G-15] | Use constants instead of type(uintx).max  | 3 | - |
+| [G-16] | Use assembly to assign address state variables  | 5 | - |
+| [G-17] | Use solidity version 0.8.19 to gain some gas boost  | 24 | - |
+| [G-18] | Shorten the array rather than copying to a new one   | 10 | - |
+| [G-19] | abi.encode() is less efficient than abi.encodepacked() | 6 | - |
+| [G-20] | Duplicated require()/revert()/IF Checks Should Be Refactored To A Modifier Or Function | 8 | - |
+| [G-21] | Use hardcode address instead address(this) | 4 | - |
+| [G-22] | Public Functions To External | 1 | - |
+| [G-23] | Non-usage of specific imports | - | - |
+| [G-24] |It Costs More Gas To Initialize Variables To Zero Than To Let The Default Of Zero Be Applied|15|- |
+| [G-25] | Checking Non-Zero Amount Values Before Transferring to Minimize or avoid unnecessary Execution Costs  | 5 | - |
+| [G-26] | Don't declare the variables inside the loops | 1 | - |
+| [G-27] | Remove unused modifiers code to reduce the deployment cost | 2 | - |
+| [G-28] | Remove the initializer modifier | 5 | 50000 |
+| [G-29] | Do not calculate constants variables | 3 | - |
+| [G-30] | Using calldata instead of memory for read-only arguments in external functions saves gas | 1| 60 |
 
-
-
-### TOTAL INSTANCES : 
-
-## APROXIMATE GAS SAVED: 
 
 ##
 
 ## [G-1] Use uint256(1)/uint256(2) instead for true and false boolean states
 
-If you don't use boolean for storage you will avoid Gwarmaccess 100 gas. In addition, state changes of boolean from true to false can cost up to ~20000 gas rather than uint256(2) to uint256(1) that would cost significantly less
+> Instances (7)
+
+> Approximate gas saved (140K gas)
+
+If you don't use boolean for storage you will avoid Gwarmaccess 100 gas. In addition, state changes of boolean from true to false can cost up to ~20000 gas rather than uint256(2) to uint256(1) that would cost significantly less. 
+
+The remix [test results](https://gist.github.com/sathishpic22/bd50ff58acca15c7d8c0270a28afd021) are clearly proves if we use uint256(1)/uint256(2) instead of true false can save 20k gas
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -59,9 +73,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
 
 ## [G-2] Using storage instead of memory for structs/arrays saves gas
 
-> Instances()
+> Instances(11)
 
-> Approximate gas saved: 
+> Approximate gas saved: 23000 gas 
 
 When fetching data from a storage location, assigning the data to a memory variable causes all fields of the struct/array to be read from storage, which incurs a Gcoldsload (2100 gas) for each field of the struct/array. If the fields are read from the new memory variable, they incur an additional MLOAD rather than a cheap stack read. Instead of declearing the variable with the memory keyword, declaring the variable with the storage keyword and caching any fields that need to be re-read in stack variables, will be much cheaper, only incuring the Gcoldsload for the fields actually read. The only time it makes sense to read the whole struct/array into a memory variable, is if the full struct/array is being returned by the function, is being passed to a function that requires memory, or if the array/struct is being read from another memory array/struct
 
@@ -111,7 +125,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ## [G-3] For events use 3 indexed rule to save gas
 
-> Instances()
+> Instances(18)
 
 Need to declare 3 indexed fields for event parameters. If the event parameter is less than 3 should declare all event parameters indexed
 
@@ -163,7 +177,6 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 33: event DelayedWithdrawalCreated(address podOwner, address recipient, uint256 amount, uint256 index);
 36: event DelayedWithdrawalsClaimed(address recipient, uint256 amountClaimed, uint256 delayedWithdrawalsCompleted);
 
-
 ```
 [DelayedWithdrawalRouter.sol#L13](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L13)
 
@@ -171,7 +184,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ## [G-4] Lack of input value checks cause a redeployment if any human/accidental errors
 
-> Instances()
+> Instances(3)
 
 Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables.
 
@@ -207,7 +220,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ## [G-5] Use nested if and, avoid multiple check combinations
 
-> Instances()
+> Instances(2)
+
+> Approximate gas saved : 18 gas  
 
 Using nested is cheaper than using && multiple check combinations. There are more advantages, such as easier to read code and better coverage reports.
 
@@ -227,7 +242,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ## [G-6] Unnecessary look up in if condition
 
-> Instances()
+> Instances(3)
 
 If the || condition isn’t required, the second condition will have been looked up unnecessarily.
 
@@ -258,7 +273,7 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 
 ## [G-7] Functions should be used instead of modifiers to save gas
 
-> Instances()
+> Instances(15)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -307,7 +322,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ## [G-8] Sort Solidity operations using short-circuit mode
 
-> Instances()
+> Instances(3)
 
 Short-circuiting is a solidity contract development model that uses OR/AND logic to sequence different cost operations. It puts low gas cost operations in the front and high gas cost operations in the back, so that if the front is low If the cost operation is feasible, you can skip (short-circuit) the subsequent high-cost Ethereum virtual machine operation.
 
@@ -357,7 +372,9 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ## [G-9] Use assembly to check for address(0)
 
-> Instances()
+> Instances(12)
+
+> Approximate gas saved : 72 gas 
 
 Saves 6 gas per instance
 
@@ -421,7 +438,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ## [G-10] Shorthand way to write if / else statement can reduce the deployment cost
 
-> Instances()
+> Instances(7)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -502,7 +519,7 @@ Address.isContract(staker : require(IERC1271(staker).isValidSignature(digestHash
 
 ## [G-11] Less gas consuming condition checks should be on top
 
-> Instances()
+> Instances(4)
 
 When writing conditional statements in smart contracts, it is generally best practice to order the conditions so that the less gas-consuming checks are performed first. This can help to optimize the gas usage of the contract and improve its overall efficiency
 
@@ -557,14 +574,11 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L360-L363](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L360-L363)
 
-
-
-
 ##
 
 ## [G-12] internal functions not called by the contract should be removed to save deployment gas
 
-> Instances()
+> Instances(9)
 
 If the functions are required by an interface, the contract should inherit from that interface and use the override keyword
 
@@ -617,7 +631,9 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
 
 ## [G-13] Modifiers or private functions only called once can be inlined to save gas
 
-Instances ()
+> Instances (6)
+
+> Approximate gas saved : 300 gas 
 
 ITs possible to save 40-50 gas
 
@@ -660,7 +676,7 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ## [G-14] NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS
 
-Instances ()
+Instances (2)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -681,7 +697,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ## [G-15] Use constants instead of type(uintx).max
 
-Instances ():
+Instances (3):
 
 type(uint256).max it uses more gas in the distribution process and also for each transaction than constant usage
 
@@ -698,6 +714,8 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 ##
 
 ## [G-16] Use assembly to assign address state variables 
+
+> Instances (5)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
@@ -771,6 +789,8 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ## [G-18] Shorten the array rather than copying to a new one
 
+> Instances (10)
+
 Inline-assembly can be used to shorten the array by changing the length slot, so that the entries don't have to be copied to a new, shorter array
 
 ```solidity
@@ -814,7 +834,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ## [G-19] abi.encode() is less efficient than abi.encodepacked()
 
-> Instances ()
+> Instances (6)
 
 [See for more information:](https://github.com/ConnorBlockchain/Solidity-Encode-Gas-Comparison)
 
@@ -856,7 +876,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ## [G-20] Duplicated require()/revert()/IF Checks Should Be Refactored To A Modifier Or Function
 
-Instances()
+> Instances(8)
 
 Saves deployment costs
 
@@ -894,6 +914,8 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ## [G-21] Use hardcode address instead address(this)
 
+> Instances (4)
+
 Instead of using address(this), it is more gas-efficient to pre-calculate and use the hardcoded address. Foundry's script.sol and solmate's LibRlp.sol contracts can help achieve this
 
 [References:](https://book.getfoundry.sh/reference/forge-std/compute-create-address)
@@ -923,7 +945,7 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 
 ## [G-22] Public Functions To External
 
-> Instances ()
+> Instances (1)
 
 The following functions could be set external to save gas and improve code quality. External call cost is less expensive than of public functions.
 
@@ -958,6 +980,8 @@ import {GlobalState, UserState} from "src/Common.sol";
 ## 
 
 ## [G-24] It Costs More Gas To Initialize Variables To Zero Than To Let The Default Of Zero Be Applied
+
+> Instances (15)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -1014,6 +1038,8 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ## [G-25] Checking Non-Zero Amount Values Before Transferring to Minimize or avoid unnecessary Execution Costs 
 
+> Instances (4)
+
 Checking the value of the amount to ensure it is non-zero before transferring it can help you avoid unnecessary execution costs and ensure that the transfer is successful.
 
 ```solidity
@@ -1043,10 +1069,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
 
 ##
 
-
-##
-
 ## [G-26] Don't declare the variables inside the loops
+
+> Instances (1)
 
 Declare outside the loop and only use inside
 
@@ -1055,6 +1080,8 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 ##
 
 ## [G-27] Remove unused modifiers code to reduce the deployment cost
+
+> Instances (2)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
@@ -1075,6 +1102,8 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 ##
 
 ## [G-28] Remove the initializer modifier
+
+> Instances (5)
 
 If we can just ensure that the initialize() function could only be called from within the constructor, we shouldn’t need to worry about it getting called again.
 
@@ -1120,6 +1149,54 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 49:  function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
 
 ```
+##
+
+## [G-29] Do not calculate constants variables
+
+> Instances (3) 
+
+Due to how constant variables are implemented (replacements at compile-time), an expression assigned to a constant variable is recomputed each time that the variable is used, which wastes some gas
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManagerStorage.sol
+
+17: bytes32 public constant DOMAIN_TYPEHASH =
+        keccak256("EIP712Domain(string name,uint256 chainId,address verifyingContract)");
+
+20: bytes32 public constant DEPOSIT_TYPEHASH =
+        keccak256("Deposit(address strategy,address token,uint256 amount,uint256 nonce,uint256 expiry)");
+```
+[StrategyManagerStorage.sol#L17-L18](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManagerStorage.sol#L17-L18)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+23: uint256 constant internal PAUSE_ALL = type(uint256).max;
+
+```
+[Pausable.sol#L23](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L23)
+
+##
+
+## [G-30] Using calldata instead of memory for read-only arguments in external functions saves gas
+
+When a function with a memory array is called externally, the abi.decode() step has to use a for-loop to copy each index of the calldata to the memory index. Each iteration of this for-loop costs at least 60 gas (i.e. 60 * <mem_array>.length). Using calldata directly, obliviates the need for such a loop in the contract code and runtime execution. Note that even if an interface defines a function as having memory arguments, it’s still valid for implementation contracs to use calldata arguments instead.
+
+If the array is passed to an internal function which passes the array to another internal function where the array is modified and therefore memory is used in the external call, it’s still more gass-efficient to use calldata when the external function uses modifiers, since the modifiers may prevent the internal functions from being called. Structs have the same overhead as an array of length one
+
+Note that I’ve also flagged instances where the function is public but can be marked as external since it’s not called by the contract, and cases where a constructor is involved
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+254: bytes memory signature
+
+```
+[StrategyManager.sol#L254](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L254)
+
+
+
+
 
 
 
