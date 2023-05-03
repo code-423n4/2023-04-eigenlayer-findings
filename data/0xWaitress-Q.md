@@ -22,3 +22,5 @@ struct Input {
 function completeQueuedWithdrawals(Input[] calldata intputs) {
 }
 ```
+
+2. Same issue as 1.) for slashShares
