@@ -1,8 +1,9 @@
 ## [L-01] Missing out-of-bounds access check in `_removeStrategyFromStakerStrategyList` function
 
-### Description
-
+**Type**: Data Validation
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+
+### Description
 
 If the [`_removeStrategyFromStakerStrategyList` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) is called by the [`recordOvercommittedBeaconChainETH` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
 
@@ -14,7 +15,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/Strateg
 
 ```diff
 -uint256 beaconChainETHStrategyIndex = 0;
-+uint256 beaconChainETHStrategyIndex = 42;
++uint256 beaconChainETHStrategyIndex = 42; // arbitrary number
 ```
 
 This modification will trigger the error as the following:
@@ -29,11 +30,12 @@ Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
 ## [L-02] Missing zero address check for `address initOwner` in `initialize` function of `DelayedWithdrawalRouter` contract
 
-### Description
-
+**Type**: Data Validation
 **Target**: [DelayedWithdrawalRouter.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol)
 
-The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of `DelayedWithdrawalRouter` has no zero value check for the `address initOwner`.
+### Description
+
+The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of `DelayedWithdrawalRouter` contract has no zero value check for the `address initOwner`.
 
 ```solidity
     function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
@@ -57,15 +59,18 @@ It calls the following [`_transferOwnership` function](https://github.com/OpenZe
     }
 ```
 
+Note that this function also doesn't check zero address for `address newOwner`.
+
 ### Recommendation
 
 Consider checking zero value for the `address initOwner` argument.
 
 ## [L-03] Missing zero address check in the constructor of `EigenPodManager` contract
 
-### Description
-
+**Type**: Data Validation
 **Target**: [EigenPodManager.sol](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol)
+
+### Description
 
 The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76) of `EigenPodManager` has no zero value check for the following arguments:
 
@@ -80,9 +85,10 @@ Consider checking zero address for the 4 constructor arguments.
 
 ## [L-04] Missing zero address check in the constructor of `EigenPod` contract
 
-### Description
-
+**Type**: Data Validation
 **Target**: [EigenPod.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol)
+
+### Description
 
 The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) of `EigenPod` has no zero value check for the following arguments:
 
@@ -96,9 +102,10 @@ Consider checking zero address for the 3 constructor arguments.
 
 ## [L-05] Missing zero value check in `deposit` function
 
-### Description
-
+**Type**: Data Validation
 **Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
+### Description
 
 The [`deposit` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78) in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
 
@@ -108,9 +115,10 @@ Consider checking zero value for the `uint256 amount` argument.
 
 ## [L-06] Missing array length check in `queueWithdrawal` function
 
-### Description
-
+**Type**: Data Validation
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+
+### Description
 
 The [`queueWithdrawal` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329) in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
 
@@ -120,9 +128,10 @@ Consider checking the length of the `uint256[] strategyIndexes` argument.
 
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
-### Description
-
+**Type**: Code Quality
 **Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
+### Description
 
 Currently, the following comment for the `sharesToUnderlying` function is Misleading.
 
@@ -138,9 +147,10 @@ Consider fixing the comment for `sharesToUnderlying` function to accurately refl
 
 ## [N-02] Misleading comments for `Merkle` contract
 
-## Description
-
+**Type**: Code Quality
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
+
+## Description
 
 There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle.sol`, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments doesn't reflect the changes.
 
