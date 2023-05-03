@@ -1,18 +1,4 @@
-## [L-01] Missing check for zero value in `deposit` function
-
-### Description
-
-**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
-
-The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78
-) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
-
-### Recommendation
-
-Consider checking zero value for the `uint256 amount` argument.
-
-
-## [L-02] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
+## [L-01] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
 ### Description
 
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
@@ -41,17 +27,49 @@ Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
 
 
-## [L-03] Missing check for array length in `queueWithdrawal` function
+## [L-02] Missing check for array length in `queueWithdrawal` function
 
 ### Description
 
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
 The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329
-) function in StrategyManager.sol does not validate the length of the `strategyIndexes` input argument.
+) function in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
 
 ### Recommendation
-Consider checking the length of the `strategyIndexes` argument.
+Consider checking the length of the `uint256[] strategyIndexes` argument.
+
+
+
+## [L-03] Missing check for zero value in `deposit` function
+
+### Description
+
+**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
+The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78
+) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
+
+### Recommendation
+
+Consider checking zero value for the `uint256 amount` argument.
+
+
+
+## [L-04] Missing check for zero address in the constructor of `PauserRegistry` contract
+
+### Description
+
+**Target**: [PauserRegistry.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/permissions/PauserRegistry.sol)
+
+
+The [constructor of `PauserRegistry`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/permissions/PauserRegistry.sol#L26
+) has no zero value check for the `address _pauser` and `address _unpauser` arguments.
+
+### Recommendation
+
+Consider checking zero address for the `address _pauser` and `address _unpauser` arguments.
+
 
 
 
