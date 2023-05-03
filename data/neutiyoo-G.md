@@ -1,8 +1,8 @@
 ## [G-01] Optimize `merkleizeSha256` function for gas-efficiency
 
-### Description
-
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
+
+### Description
 
 Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153) function is correct, it can be more gas-efficient by making use of the following optimizations:
 
@@ -146,9 +146,9 @@ Consider optimizing `merkleizeSha256` by using in-place computation, assembly, a
 
 ## [G-02] Use unchecked arithmetic in `processInclusionProofSha256` and `processInclusionProofKeccak` functions
 
-### Description
-
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
+
+### Description
 
 The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in `Merkle.sol` include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop.
 
