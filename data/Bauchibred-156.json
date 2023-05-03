@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "3",
+  "title": "EigenPod.withdrawBeforeRestaking() is just a window for podOwner to take all EigenPod's ETH balance",
+  "issueId": 156,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/156"
+}
