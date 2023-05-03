@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "rvierdiiev",
+  "risk": "2",
+  "title": "User can call `completeQueuedWithdrawal` with !receiveAsTokens param in order to delegate his shares to freezed operator",
+  "issueId": 183,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/183"
+}
