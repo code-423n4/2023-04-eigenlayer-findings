@@ -1,4 +1,17 @@
-## [L-01] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
+
+## [L-01] Missing check for zero value in `deposit` function
+**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+### Description
+
+The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78
+) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
+
+### Recommendation
+
+Consider checking zero value for the `uint256 amount` argument.
+
+
+## [L-02] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
 ### Description
@@ -24,7 +37,9 @@ This modification will trigger the error as the following:
 
 Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
-## [L-02] Missing check for array length in `queueWithdrawal` function
+
+
+## [L-03] Missing check for array length in `queueWithdrawal` function
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 ### Description
 
@@ -35,6 +50,7 @@ The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/ma
 Consider checking the length of the `strategyIndexes` argument.
 
 
+
 ## [N-01] Misleading comments in `Merkle.sol`
 
 ## Description
@@ -43,7 +59,7 @@ Consider checking the length of the `strategyIndexes` argument.
 
 There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle.sol`, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments doesn't reflect the changes.
 
-```
+```diff
 /**
  * @dev These functions deal with verification of Merkle Tree proofs.
  *
@@ -71,8 +87,6 @@ The above comments are incorrect as OpenZeppelin have defined [standard merkle t
 ### Recommendation
 
 Consider updating the comments in `Merkle.sol` to accurately reflect the current implementation and removing any misleading information.
-
-
 
 
 
