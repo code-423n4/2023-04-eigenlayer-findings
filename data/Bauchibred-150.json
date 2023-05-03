@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "3",
+  "title": "ECDSA library is completely vulnerable due to integration of outdated openZeppelin version (4.7.1)",
+  "issueId": 150,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/150"
+}
