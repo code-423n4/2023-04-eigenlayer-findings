@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bughunter101",
+  "risk": "2",
+  "title": "The stake() function dnes not have the nonReentrant",
+  "issueId": 214,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/214"
+}
