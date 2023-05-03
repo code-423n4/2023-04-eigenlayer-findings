@@ -1,7 +1,8 @@
-
 ## [L-01] Missing check for zero value in `deposit` function
-**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
 ### Description
+
+**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
 
 The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78
 ) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
@@ -12,9 +13,10 @@ Consider checking zero value for the `uint256 amount` argument.
 
 
 ## [L-02] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
+### Description
+
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
-### Description
 If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715
 ) function is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
 
@@ -40,8 +42,10 @@ Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
 
 ## [L-03] Missing check for array length in `queueWithdrawal` function
-**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+
 ### Description
+
+**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
 The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329
 ) function in StrategyManager.sol does not validate the length of the `strategyIndexes` input argument.
@@ -51,7 +55,26 @@ Consider checking the length of the `strategyIndexes` argument.
 
 
 
-## [N-01] Misleading comments in `Merkle.sol`
+## [N-01] Misleading comment for `sharesToUnderlying` function
+
+### Description
+
+**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
+Currently, the following comment for the `sharesToUnderlying` function is Misleading.
+
+```
+* @notice In contrast to `sharesToUnderlyingView`, this function **may** make state modifications
+```
+It's because the `sharesToUnderlying` function has `view` modifier, indicating that it does not modify the state.
+
+### Recommendation
+
+Consider fixing the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
+
+
+
+## [N-02] Misleading comments for `Merkle` contract
 
 ## Description
 
