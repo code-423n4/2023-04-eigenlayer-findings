@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "3",
+  "title": "Lack of sufficient input validation could allow protocol's loss of funds via `StrategyBase.withdraw()`",
+  "issueId": 154,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/154"
+}
