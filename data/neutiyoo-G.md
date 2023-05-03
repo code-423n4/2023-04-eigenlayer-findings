@@ -1,14 +1,14 @@
 ## [G-01] Optimize `merkleizeSha256` function for gas-efficiency
 
 ### Description
+
 **Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
 
-Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153
-) function is correct, it can be more gas-efficient by making use of the following optimizations:
+Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153) function is correct, it can be more gas-efficient by making use of the following optimizations:
 
-**1. In-place Computation**
+**1. In-place Computation**
 
-The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. Note that this optimization requires that the `leaves` array not be used again after it is modified. 
+The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. Note that this optimization requires that the `leaves` array not be used again after it is modified.
 
 Based on the current implementation, this optimization is valid. It's because there are no further usages of the `leaves` array.
 
@@ -20,10 +20,10 @@ The use of unchecked arithmetic is more gas-efficient as it skips checks for ove
 
 This optimization for `uint i` is safe because of `i < numNodesInLayer`. Therefore, overflow is not possible.
 
-
 ### Proof of Concept
 
 The function `merkleizeSha256Optimized` provided below is an optimized version of the `merkleizeSha256` function.
+
 ```solidity
     /**
      * @notice Returns the Merkle root of a tree created from a set of leaves using SHA256 as its hash function.
@@ -76,21 +76,22 @@ The function `merkleizeSha256Optimized` provided below is an optimized version o
 
 **Impact**
 
-| Function Name                         | min             | avg    | median | max     | # calls |
-|---------------------------------------|-----------------|--------|--------|---------|---------|
-| merkleizeSha256                       | 2353            | 274987 | 62975  | 1396167 | 10      |
-| merkleizeSha256Optimized              | 2136            | 238896 | 56158  | 1197190 | 10      |
+| Function Name            | min  | avg    | median | max     | # calls |
+| ------------------------ | ---- | ------ | ------ | ------- | ------- |
+| merkleizeSha256          | 2353 | 274987 | 62975  | 1396167 | 10      |
+| merkleizeSha256Optimized | 2136 | 238896 | 56158  | 1197190 | 10      |
 
-| Improvement |          |
-| ----------- | -------- |
-| Minimum     | 9.22%    |
-| Average     | 13.12%   |
-| Median      | 10.82%   |
-| Maximum     | 14.25%   |
+| Improvement |        |
+| ----------- | ------ |
+| Minimum     | 9.22%  |
+| Average     | 13.12% |
+| Median      | 10.82% |
+| Maximum     | 14.25% |
 
- The data shows a significant increase in gas efficiency with the use of `merkleizeSha256Optimized` compared to `merkleizeSha256`. It's worth emphasizing that these results are influenced by the input data and execution environment, so the actual improvement may differ in other contexts. Nonetheless, the results provide valuable insight into the potential gas cost savings that can be achieved by leveraging the optimized version of the function.
+The data shows a significant increase in gas efficiency with the use of `merkleizeSha256Optimized` compared to `merkleizeSha256`. It's worth emphasizing that these results are influenced by the input data and execution environment, so the actual improvement may differ in other contexts. Nonetheless, the results provide valuable insight into the potential gas cost savings that can be achieved by leveraging the optimized version of the function.
 
 The test codes are the following:
+
 ```solidity
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity =0.8.12;
@@ -140,8 +141,8 @@ contract MerkleTest is Test {
 ```
 
 ### Recommendation
-Consider optimizing `merkleizeSha256` by using in-place computation, assembly, and unchecked arithmetic.
 
+Consider optimizing `merkleizeSha256` by using in-place computation, assembly, and unchecked arithmetic.
 
 ## [G-02] Use unchecked arithmetic in `processInclusionProofSha256` and `processInclusionProofKeccak` functions
 
@@ -162,7 +163,6 @@ unchecked {
     i += 32;
 }
 ```
-
 
 This optimization is safe because based on the current implementation, overflow is not possible as the length of proof is validated before the function call.
 
