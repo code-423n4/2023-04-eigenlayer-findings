@@ -1,22 +1,24 @@
-## [L-01] Missing check for out-of-bounds access in `_removeStrategyFromStakerStrategyList` function
+## [L-01] Missing out-of-bounds access check in `_removeStrategyFromStakerStrategyList` function
+
 ### Description
 
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
-If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715
-) function is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) function is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
 
 ### Proof of Concept
 
 Change the value of `uint256 beaconChainETHStrategyIndex` from `0` to `42` in `StrategyManagerUnit.t.sol` as shown below:
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/StrategyManagerUnit.t.sol#L185
+
 ```diff
 -uint256 beaconChainETHStrategyIndex = 0;
 +uint256 beaconChainETHStrategyIndex = 42;
 ```
 
 This modification will trigger the error as the following:
+
 ```text
 [FAIL. Reason: Index out of bounds Counterexample: calldata=0x28bdd3e000000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000003, args=[3, 3]] testRecordOvercommittedBeaconChainETHSuccessfully(uint256,uint256) (runs: 116, μ: 144482, ~: 144482)
 ```
@@ -25,45 +27,37 @@ This modification will trigger the error as the following:
 
 Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
-
-
-## [L-02] Missing check for array length in `queueWithdrawal` function
+## [L-02] Missing array length check in `queueWithdrawal` function
 
 ### Description
 
 **Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
 
-The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329
-) function in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
+The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329) function in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
 
 ### Recommendation
+
 Consider checking the length of the `uint256[] strategyIndexes` argument.
 
-
-
-## [L-03] Missing check for zero value in `deposit` function
+## [L-03] Missing zero value check in `deposit` function
 
 ### Description
 
 **Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
 
-The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78
-) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
+The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
 
 ### Recommendation
 
 Consider checking zero value for the `uint256 amount` argument.
 
-
-
-## [L-04] Missing check for zero address in the constructor of `EigenPodManager` contract
+## [L-04] Missing zero address check in the constructor of `EigenPodManager` contract
 
 ### Description
 
 **Target**: [EigenPodManager.sol](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol)
 
-The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76
-) has no zero value check for the following arguments:
+The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76) has no zero value check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IBeacon _eigenPodBeacon`
@@ -74,9 +68,7 @@ The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eig
 
 Consider checking zero address for the constructor arguments.
 
-
-
-## [L-05] Missing check for zero address in the constructor of `EigenPod` contract
+## [L-05] Missing zero address check in the constructor of `EigenPod` contract
 
 ### Description
 
@@ -92,8 +84,6 @@ The [constructor of `EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer
 
 Consider checking zero address for the constructor arguments.
 
-
-
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
 ### Description
@@ -105,13 +95,12 @@ Currently, the following comment for the `sharesToUnderlying` function is Mislea
 ```
 * @notice In contrast to `sharesToUnderlyingView`, this function **may** make state modifications
 ```
+
 It's because the `sharesToUnderlying` function has `view` modifier, indicating that it does not modify the state.
 
 ### Recommendation
 
 Consider fixing the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
-
-
 
 ## [N-02] Misleading comments for `Merkle` contract
 
@@ -149,6 +138,3 @@ The above comments are incorrect as OpenZeppelin have defined [standard merkle t
 ### Recommendation
 
 Consider updating the comments in `Merkle.sol` to accurately reflect the current implementation and removing any misleading information.
-
-
-
