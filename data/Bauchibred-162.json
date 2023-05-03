@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "2",
+  "title": "StrategyManager.sol: Using `IERC20[] calldata tokens ` could be dangerous when a weird token exists in the provided array and could erupt unexpected behaviour of execution",
+  "issueId": 162,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/162"
+}
