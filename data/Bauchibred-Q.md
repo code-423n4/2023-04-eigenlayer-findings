@@ -7,7 +7,7 @@
             - L-01 Missing equivalence checks in setters
             - L-02 Measures for preventing out of gas error should be implemented
             - L-03 The idea of having a pauser and an unpauser hints a technical flaw
-            - L-04 Inconsistency of the \_gap in contracts in scope most contracts have it fixed at 48 even if less than that could be used to fit the best practise of having 50 storage gaps
+            - L-04 Inconsistency of _GAPs in contracts would make it more difficult to maintain code
             - L-05 Unfair slashing of frozen user's shares
             - L-06 Lack of zero address checks for immutable addresses in constructor
             - L-07 Validate array length matching before execution to avoid reverts
@@ -150,15 +150,17 @@ One could argue that the idea of having a pauser and an unpauser is just unneces
 
 Thorougly think this through and implement the best case for users and protocol
 
-## L-04 Inconsistency of the \_gap in contracts in scope most contracts have it fixed at 48 even if less than that could be used to fit the best practise of having 50 storage gaps
+## L-04 Inconsistency of _GAPs in contracts would make it more difficult to maintain code
 
 ### Proof of Concept
 
-Multiple contracts in scope implement the `_gap` but they are all defaulted to 48 except for one
+All but one __GAPs have the same size 48, while the different contracts have a different number of storage
+variables. If the __GAP size isn't logical it is more difficult to maintain the code.
+Note: set to a risk rating of low but this could as well be a medium since the probably of something going wrong with future upgrades is low to medium, and the impact of mistakes would be medium to high.
 
 ### Recommendation
 
-Check this and implement the `_gap` correctly
+Check and update the __GAPs of all the contracts.
 
 ## L-05 Unfair slashing of frozen user's shares
 
