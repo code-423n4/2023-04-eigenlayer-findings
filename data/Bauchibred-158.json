@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "2",
+  "title": "Merkle.merkleizeSha256() could revert due to out of gas when the vouchees array size is large",
+  "issueId": 158,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/158"
+}
