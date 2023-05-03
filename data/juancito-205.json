@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "juancito",
+  "risk": "2",
+  "title": "It is impossible to slash queued withdrawals that contain a malicious strategy due to a misplacement of the ++i increment",
+  "issueId": 205,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/205"
+}
