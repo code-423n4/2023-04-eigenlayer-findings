@@ -27,37 +27,47 @@ This modification will trigger the error as the following:
 
 Validate `uint256 strategyIndex` to avoid out-of-bounds access.
 
-## [L-02] Missing array length check in `queueWithdrawal` function
+## [L-02] Missing zero address check for `address initOwner` in `initialize` function of `DelayedWithdrawalRouter` contract
 
 ### Description
 
-**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+**Target**: [DelayedWithdrawalRouter.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol)
 
-The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329) function in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
+The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of `DelayedWithdrawalRouter` has no zero value check for the `address initOwner`.
+
+```solidity
+    function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
+        _transferOwnership(initOwner);
+        _initializePauser(_pauserRegistry, initPausedStatus);
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
+```
+
+It calls the following [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) function from OpenZeppelin `OwnableUpgradeable.sol`.
+
+```solidity
+    /**
+     * @dev Transfers ownership of the contract to a new account (`newOwner`).
+     * Internal function without access restriction.
+     */
+    function _transferOwnership(address newOwner) internal virtual {
+        address oldOwner = _owner;
+        _owner = newOwner;
+        emit OwnershipTransferred(oldOwner, newOwner);
+    }
+```
 
 ### Recommendation
 
-Consider checking the length of the `uint256[] strategyIndexes` argument.
+Consider checking zero value for the `address initOwner` argument.
 
-## [L-03] Missing zero value check in `deposit` function
-
-### Description
-
-**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
-
-The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78) function in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
-
-### Recommendation
-
-Consider checking zero value for the `uint256 amount` argument.
-
-## [L-04] Missing zero address check in the constructor of `EigenPodManager` contract
+## [L-03] Missing zero address check in the constructor of `EigenPodManager` contract
 
 ### Description
 
 **Target**: [EigenPodManager.sol](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol)
 
-The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76) has no zero value check for the following arguments:
+The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76) of `EigenPodManager` has no zero value check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IBeacon _eigenPodBeacon`
@@ -66,15 +76,15 @@ The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eig
 
 ### Recommendation
 
-Consider checking zero address for the constructor arguments.
+Consider checking zero address for the 4 constructor arguments.
 
-## [L-05] Missing zero address check in the constructor of `EigenPod` contract
+## [L-04] Missing zero address check in the constructor of `EigenPod` contract
 
 ### Description
 
 **Target**: [EigenPod.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol)
 
-The [constructor of `EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) has no zero value check for the following arguments:
+The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) of `EigenPod` has no zero value check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
@@ -82,7 +92,31 @@ The [constructor of `EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer
 
 ### Recommendation
 
-Consider checking zero address for the constructor arguments.
+Consider checking zero address for the 3 constructor arguments.
+
+## [L-05] Missing zero value check in `deposit` function
+
+### Description
+
+**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
+
+The [`deposit` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78) in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
+
+### Recommendation
+
+Consider checking zero value for the `uint256 amount` argument.
+
+## [L-06] Missing array length check in `queueWithdrawal` function
+
+### Description
+
+**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
+
+The [`queueWithdrawal` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329) in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
+
+### Recommendation
+
+Consider checking the length of the `uint256[] strategyIndexes` argument.
 
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
