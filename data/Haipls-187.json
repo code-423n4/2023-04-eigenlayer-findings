@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Haipls",
+  "risk": "2",
+  "title": "Missing `msg.sender` field in signature for deposit action",
+  "issueId": 187,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/187"
+}
