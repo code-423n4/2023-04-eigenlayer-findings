@@ -2,45 +2,46 @@ Report contents changed:  # LOW FINDINGS
 
 | LOW COUNT| ISSUES | INSTANCES|
 |-------|-----|--------|
-| [L-1]| MIXING AND OUTDATED COMPILER  | 6 |
-| [L-2]| Lack of Sanity/Threshold/Limit Checks  | 2 |
-| [L-3]| Function Calls in Loop Could Lead to Denial of Service |  |
-| [L-4]| Project Upgrade and Stop Scenario should be  |  |
-| [L-5]| Front running attacks by the onlyOwner  |  |
-| [L-10]| Use BytesLib.sol library to safely covert bytes to uint256  | 2 |
-| [L-11]| Avoid infinite loops whenever possible  | 2 |
-| [L-12]| In the constructor, there is no return of incorrect address identification  | 6 |
-| [L-13]| Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern  | 3 |
+| [L-1]| initialize() functions could be front run  | 6 |
+| [L-2]| Missing Event for initialize  | 2 |
+| [L-3]| Use right way to convert bytes to bytes32 | 1 |
+| [L-4]| Owner can renounce the ownership   | - |
+| [L-5]| LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG  | 2 |
+| [L-6]| OUTDATED COMPILER  | 24 |
+| [L-7]| Lack of Sanity/Threshold/Limit Checks  | 5 |
+| [L-8]| Function Calls in Loop Could Lead to Denial of Service  | 7 |
+| [L-9]| Project Upgrade and Stop Scenario should be  | - |
+| [L-10]|  Front running attacks by the onlyOwner | 1 |
+| [L-11]| Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern  | 1 |
+| [L-12]|  Unused Modifiers block  | 2 |
+| [L-13]| Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator | 3 |
+| [L-14]| Insufficient coverage | - |
 
  # NON CRITICAL FINDINGS
 
 | NC COUNT| ISSUES | INSTANCES|
 |-------|-----|--------|
-| [NC-1]| immutable should be uppercase  | 4 |
+| [NC-1]| immutable should be uppercase  | 8 |
 | [NC-2]| Missing NATSPEC  | - |
-| [NC-3]| For functions, follow Solidity standard naming conventions (internal function style rule) | 28 |
-| [NC-4]| Need Fuzzing test for unchecked  | 5 |
-| [NC-5]| Remove commented out code  | - |
-| [NC-6]| Inconsistent method of specifying a floating pragma  | 8 |
-| [NC-7]| NO SAME VALUE INPUT CONTROL  | 1 |
-| [NC-8]| Constant redefined elsewhere  | - |
-| [NC-9]| According to the syntax rules, use => mapping ( instead of => mapping( using spaces as keyword| 3 |
-| [NC-10]| Use SMTChecker  | - |
-| [NC-11]| Constants on the left are better | 20 |
-| [NC-12]| Assembly Codes Specific – Should Have Comments  | 18 |
-| [NC-13]| Take advantage of Custom Error’s return value property  | 4 |
-| [NC-14]| Use constants instead of using numbers directly without explanations  | 6 |
-| [NC-15]| Shorthand way to write if / else statement | 4 |
-| [NC-16]| For critical changes should emit both old and new values  | 1 |
-| [NC-17]| Don't use named return variables its confusing  | 8 |
-| [NC-18]| NON-LIBRARY/INTERFACE FILES SHOULD USE FIXED COMPILER VERSIONS, NOT FLOATING ONES  | 7 |
-| [NC-19]| Constants should be in uppercase   | 7 |
-| [NC-20]| TYPOS  | 4 |
-| [NC-21]| Contracts should have full test coverage  | - |
-| [NC-22]| Use named parameters for mapping type declarations  | 3 |
-| [NC-23]| File does not contain an SPDX Identifier   | 4 |
-| [NC-24]| declaration shadows an existing declaration  | - |
-| [NC-25]| Event is missing indexed fields  | 2 |
+| [NC-3]| For functions, follow Solidity standard naming conventions (internal function style rule) | 9 |
+| [NC-4]| Need Fuzzing test for unchecked  | 13 |
+| [NC-5]| NO SAME VALUE INPUT CONTROL  | 2 |
+| [NC-6]| According to the syntax rules, use => mapping ( instead of => mapping( using spaces as keyword  | 5 |
+| [NC-7]| Use SMTChecker   | - |
+| [NC-8]| Assembly Codes Specific – Should Have Comments | 3 |
+| [NC-9]| Shorthand way to write if / else statement| 7 |
+| [NC-10]| Don't use named return variables its confusing  | 2 |
+| [NC-11]| Constants should be in uppercase | 1 |
+| [NC-12]| Shorter inheritance list  | 2 |
+| [NC-13]| Include return parameters in NatSpec comments| - |
+| [NC-14]| Constants should be defined rather than calculating every time   | 3 |
+| [NC-15]| Use constants instead of type(uintx).max | 3 |
+| [NC-16]| Tokens accidentally sent to the contract cannot be recovered  | - |
+| [NC-17]| Add a timelock to critical functions  | 1 |
+| [NC-18]| NatSpec comments should be increased in contracts  | - |
+| [NC-19]| Not recommended to use numbers in function names    | - |
+| [NC-20]| For critical changes emit both old and new values   | - |
+
 
 
 ##
@@ -94,8 +95,9 @@ function initialize(
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L49
 
+##
 
-## [L-3] Missing Event for critical parameters init and change
+## [L-2] Missing Event for initialize
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
@@ -128,7 +130,7 @@ Add Event-Emit
 
 ##
 
-## [L-4] Use right way to convert bytes to bytes32 
+## [L-3] Use right way to convert bytes to bytes32 
 
 If _podWithdrawalCredentials() returns a value of type bytes, then using bytes32(_podWithdrawalCredentials()) to convert it to a bytes32 variable is not the correct way to do it.
 
@@ -153,7 +155,7 @@ bytes32 podWithdrawalCreds32 = bytes32(uint256(abi.encodePacked(podWithdrawalCre
 
 ##
 
-## [L-5] Owner can renounce the ownership 
+## [L-4] Owner can renounce the ownership 
 
 # Description:
 Typically, the contract’s owner is the account that deploys the contract. As a result, the owner is able to perform certain privileged activities.
@@ -205,7 +207,7 @@ We recommend to either reimplement the function to disable it or to clearly spec
 
 ##
 
-## [L-6] LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG
+## [L-5] LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG
 
 The project contracts in scope are using low level calls with solidity version before 0.8.14 which can result in optimizer bug
 
@@ -227,7 +229,7 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/Merkle.sol
 ### Recommended Mitigation Steps
 Consider upgrading to at least solidity v0.8.15.
 
-## [L-7] OUTDATED COMPILER
+## [L-6] OUTDATED COMPILER
 
 The pragma version used are: 0.8.12
 
@@ -279,7 +281,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 ```
 ##
 
-## [L-8] Lack of Sanity/Threshold/Limit Checks
+## [L-7] Lack of Sanity/Threshold/Limit Checks
 
 Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation as well as zero address checks for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
 
@@ -324,7 +326,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ##
 
-## [L-9] Function Calls in Loop Could Lead to Denial of Service
+## [L-8] Function Calls in Loop Could Lead to Denial of Service
 
 Function calls made in unbounded loop are error-prone with potential resource exhaustion as it can trap the contract due to the gas limitations or failed transactions
 
@@ -356,7 +358,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [L-10] Project Upgrade and Stop Scenario should be
+## [L-9] Project Upgrade and Stop Scenario should be
 
 At the start of the project, the system may need to be stopped or upgraded, I suggest you have a script beforehand and add it to the documentation. This can also be called an ” EMERGENCY STOP (CIRCUIT BREAKER) PATTERN “.
 
@@ -365,7 +367,7 @@ https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.s
 
 ##
 
-## [L-11] Front running attacks by the onlyOwner
+## [L-10] Front running attacks by the onlyOwner
 
 
 ```solidity
@@ -379,13 +381,9 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 [StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
 
 
-
-```solidity
-
-```
 ##
 
-## [L-12] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
+## [L-11] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
 
 It's still good practice to apply the reentry model as a precautionary measure in case the code is changed in the future to remove the onlyOwner modifier or the contract is used as a base contract for other contracts.
 
@@ -407,7 +405,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ##
 
-## [L-13] Unused Modifiers block
+## [L-12] Unused Modifiers block
 
 If a modifier is intended to enforce a certain condition on a function, but it's not actually used, this can lead to security issues or unintended behavior in the contract. Therefore, it's a good practice to remove any unused modifiers from the contract to keep the code clean and reduce the risk of bugs or vulnerabilities.
 
@@ -433,7 +431,7 @@ Remove any unused modifiers from the contract to keep the code clean and reduce 
 
 ##
 
-## [L-14] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
+## [L-13] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
 
 See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
 
@@ -446,7 +444,18 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
 
+##
 
+## [L-14] Insufficient coverage
+
+Description: The test coverage rate of the project is ~93%. Testing all functions is best practice in terms of security criteria. Due to its capacity, test coverage is expected to be 100%
+
+```
+Scoping Details
+
+- What is the overall line coverage percentage provided by your tests?:  95
+
+```
 
 
 
@@ -573,9 +582,6 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ```
 [StrategyManager.sol#L269](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L269)
-
-##
-
 
 ##
 
