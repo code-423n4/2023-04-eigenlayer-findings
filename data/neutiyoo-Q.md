@@ -56,6 +56,44 @@ Consider checking zero value for the `uint256 amount` argument.
 
 
 
+## [L-04] Missing check for zero address in the constructor of `EigenPodManager` contract
+
+### Description
+
+**Target**: [EigenPodManager.sol](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol)
+
+The [constructor of `EigenPodManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76
+) has no zero value check for the following arguments:
+
+- `IETHPOSDeposit _ethPOS`
+- `IBeacon _eigenPodBeacon`
+- `IStrategyManager _strategyManager`
+- `ISlasher _slasher`
+
+### Recommendation
+
+Consider checking zero address for the constructor arguments.
+
+
+
+## [L-05] Missing check for zero address in the constructor of `EigenPod` contract
+
+### Description
+
+**Target**: [EigenPod.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol)
+
+The [constructor of `EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) has no zero value check for the following arguments:
+
+- `IETHPOSDeposit _ethPOS`
+- `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
+- `IEigenPodManager _eigenPodManager`
+
+### Recommendation
+
+Consider checking zero address for the constructor arguments.
+
+
+
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
 ### Description
