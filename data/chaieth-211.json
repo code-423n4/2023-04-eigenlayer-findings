@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "chaieth",
+  "risk": "2",
+  "title": "Popping an element from the array of mappings `stakerStrategyList` does not actually happen using pop()",
+  "issueId": 211,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/211"
+}
