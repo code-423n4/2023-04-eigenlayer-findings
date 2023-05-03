@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "juancito",
+  "risk": "2",
+  "title": "Adversary can prevent the last user of an `StrategyBase` strategy from withdrawing their entire position",
+  "issueId": 207,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/207"
+}
