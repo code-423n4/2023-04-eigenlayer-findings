@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "juancito",
+  "risk": "3",
+  "title": "`EigenPod` does not have a way to receive Ether for users to perform the withdrawals",
+  "issueId": 206,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/206"
+}
