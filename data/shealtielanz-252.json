@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "shealtielanz",
+  "risk": "3",
+  "title": "Flaw in the Implemented Logic of `queuewithdrawal` in The `StrategyManager`. ",
+  "issueId": 252,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/252"
+}
