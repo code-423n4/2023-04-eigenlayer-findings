@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xWaitress",
+  "risk": "3",
+  "title": "the entire REQUIRED_BALANCE_WEI would be slashed even though user is only partially slashed.",
+  "issueId": 202,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/202"
+}
