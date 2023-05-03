@@ -28,7 +28,36 @@
 
 ## APROXIMATE GAS SAVED: 
 
-## [G-1] Using storage instead of memory for structs/arrays saves gas
+##
+
+## [G-1] Use uint256(1)/uint256(2) instead for true and false boolean states
+
+If you don't use boolean for storage you will avoid Gwarmaccess 100 gas. In addition, state changes of boolean from true to false can cost up to ~20000 gas rather than uint256(2) to uint256(1) that would cost significantly less
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+415: withdrawalRootPending[withdrawalRoot] = true;
+554: withdrawalRootPending[withdrawalRoot] = false;
+597: strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]] = true;
+612: strategyIsWhitelistedForDeposit[strategiesToRemoveFromWhitelist[i]] = false;
+772: withdrawalRootPending[withdrawalRoot] = false;
+
+```
+[StrategyManager.sol#L415](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L415)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+218: hasRestaked = true;
+425: provenPartialWithdrawal[validatorIndex][withdrawalHappenedSlot] = true;
+
+```
+[EigenPod.sol#L219](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L219)
+
+##
+
+## [G-2] Using storage instead of memory for structs/arrays saves gas
 
 > Instances()
 
@@ -75,14 +104,12 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 144: DelayedWithdrawal memory delayedWithdrawal = _userWithdrawals[recipient].delayedWithdrawals[delayedWithdrawalsCompletedBefore + i];
 
-
-
 ```
 [DelayedWithdrawalRouter.sol#L62-L65](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L62-L65)
 
 ##
 
-## [G-2] For events use 3 indexed rule to save gas
+## [G-3] For events use 3 indexed rule to save gas
 
 > Instances()
 
@@ -140,19 +167,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 ```
 [DelayedWithdrawalRouter.sol#L13](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L13)
 
-```solidity
-
-```
-
-```solidity
-
-```
-
-
-
 ##
 
-## [G-3] Lack of input value checks cause a redeployment if any human/accidental errors
+## [G-4] Lack of input value checks cause a redeployment if any human/accidental errors
 
 > Instances()
 
@@ -188,7 +205,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ##
 
-## [G-4] Use nested if and, avoid multiple check combinations
+## [G-5] Use nested if and, avoid multiple check combinations
 
 > Instances()
 
@@ -208,7 +225,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ##
 
-## [G-5] Unnecessary look up in if condition
+## [G-6] Unnecessary look up in if condition
 
 > Instances()
 
@@ -239,7 +256,7 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 
 ##
 
-## [G-6] Functions should be used instead of modifiers to save gas
+## [G-7] Functions should be used instead of modifiers to save gas
 
 > Instances()
 
@@ -274,8 +291,6 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
         _;
     }
 
-
-
 ```
 [StrategyManager.sol#L96-L122](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L96-L122)
 
@@ -290,7 +305,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [G-7] Sort Solidity operations using short-circuit mode
+## [G-8] Sort Solidity operations using short-circuit mode
 
 > Instances()
 
@@ -340,7 +355,7 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ##
 
-## [G-8] Use assembly to check for address(0)
+## [G-9] Use assembly to check for address(0)
 
 > Instances()
 
@@ -352,7 +367,6 @@ FILE: FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 343: require(withdrawer != address(0), "StrategyManager.queueWithdrawal: cannot withdraw to zero address");
 631: require(depositor != address(0), "StrategyManager._addShares: depositor cannot be zero address");
 684: require(depositor != address(0), "StrategyManager._removeShares: depositor cannot be zero address");
-
 
 ```
 [StrategyManager.sol#L343](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L343)
@@ -405,7 +419,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 ##
 
-## [G-9] Shorthand way to write if / else statement can reduce the deployment cost
+## [G-10] Shorthand way to write if / else statement can reduce the deployment cost
 
 > Instances()
 
@@ -439,10 +453,8 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
                         msg.sender, tokens[i], queuedWithdrawal.shares[i]
                     );
                 }
-
-
 ```
-
+[StrategyManager.sol#L289-L295](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L289-L295)
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
@@ -475,9 +487,6 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 ```
 [StrategyBase.sol#L96-L100](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L96-L100)
 
-```solidity
-
-```
 
 ### Recommended Mitigation
 
@@ -491,7 +500,7 @@ Address.isContract(staker : require(IERC1271(staker).isValidSignature(digestHash
 
 ##
 
-## [G-10] Less gas consuming condition checks should be on top
+## [G-11] Less gas consuming condition checks should be on top
 
 > Instances()
 
@@ -553,7 +562,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
 ##
 
-## [G-11] internal functions not called by the contract should be removed to save deployment gas
+## [G-12] internal functions not called by the contract should be removed to save deployment gas
 
 > Instances()
 
@@ -606,7 +615,7 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
 
 ##
 
-## [G-12] Modifiers or private functions only called once can be inlined to save gas
+## [G-13] Modifiers or private functions only called once can be inlined to save gas
 
 Instances ()
 
@@ -649,7 +658,7 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ##
 
-## [G-13] NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS
+## [G-14] NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS
 
 Instances ()
 
@@ -670,7 +679,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [G-14] Use constants instead of type(uintx).max
+## [G-15] Use constants instead of type(uintx).max
 
 Instances ():
 
@@ -688,17 +697,47 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ##
 
-## [G-20] Use assembly to assign address state variables 
+## [G-16] Use assembly to assign address state variables 
 
 ```solidity
-FILE: 
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+154: podOwner = _podOwner; 
 
 ```
+[EigenPod.sol#L154](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L154)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+57: underlyingToken = _underlyingToken;
+
+```
+[StrategyBase.sol#L57](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L57)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+187: beaconChainOracle = newBeaconChainOracle;
+
+```
+[EigenPodManager.sol#L187](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L187)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/PauserRegistry.sol
+
+44: pauser = newPauser;
+50: unpauser = newUnpauser;
+
+```
+[PauserRegistry.sol#L44](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/PauserRegistry.sol#L44)
 
 ##
 
-## [G-21]  Use solidity version 0.8.19 to gain some gas boost
+## [G-17]  Use solidity version 0.8.19 to gain some gas boost
+
+CONTEXT
+ALL IN SCOPE CONTRACTS 
 
 Upgrade to the latest solidity version 0.8.19 to get additional gas savings. See latest release for reference: https://blog.soliditylang.org/2023/02/22/solidity-0.8.19-release-announcement/
 
@@ -730,7 +769,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 ```
 ## 
 
-## [G-22] Shorten the array rather than copying to a new one
+## [G-18] Shorten the array rather than copying to a new one
 
 Inline-assembly can be used to shorten the array by changing the length slot, so that the entries don't have to be copied to a new, shorter array
 
@@ -755,9 +794,27 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/BeaconChainProofs.sol
 ```
 [BeaconChainProofs.sol#L131](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#L131)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/Merkle.sol
+
+100: bytes32[1] memory computedHash = [leaf];
+135: bytes32[] memory layer = new bytes32[](numNodesInLayer);
+```
+[Merkle.sol#L100](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L100)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+114: DelayedWithdrawal[] memory claimableDelayedWithdrawals = new DelayedWithdrawal[](claimableDelayedWithdrawalsLength);
+
+```
+[DelayedWithdrawalRouter.sol#L114](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L114)
+
 ##
 
-## [G-23] abi.encode() is less efficient than abi.encodepacked()
+## [G-19] abi.encode() is less efficient than abi.encodepacked()
+
+> Instances ()
 
 [See for more information:](https://github.com/ConnorBlockchain/Solidity-Encode-Gas-Comparison)
 
@@ -792,13 +849,14 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 175: abi.encode(eigenPodBeacon, "")
 202: abi.encode(eigenPodBeacon, "")
 
-
 ```
 [EigenPodManager.sol#L175](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L175)
 
 ##
 
-## [G-24] Duplicated require()/revert()/IF Checks Should Be Refactored To A Modifier Or Function
+## [G-20] Duplicated require()/revert()/IF Checks Should Be Refactored To A Modifier Or Function
+
+Instances()
 
 Saves deployment costs
 
@@ -834,7 +892,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ##
 
-## [G-25] Use hardcode address instead address(this)
+## [G-21] Use hardcode address instead address(this)
 
 Instead of using address(this), it is more gas-efficient to pre-calculate and use the hardcoded address. Foundry's script.sol and solmate's LibRlp.sol contracts can help achieve this
 
@@ -858,13 +916,14 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 242: return underlyingToken.balanceOf(address(this));
 236:return strategyManager.stakerStrategyShares(user, IStrategy(address(this)));
 
-
 ```
 [StrategyBase.sol#L242](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L242)
 
 ##
 
-## [G-26] Public Functions To External
+## [G-22] Public Functions To External
+
+> Instances ()
 
 The following functions could be set external to save gas and improve code quality. External call cost is less expensive than of public functions.
 
@@ -876,15 +935,9 @@ File: src/contracts/pods/EigenPodManager.sol
 [EigenPodManager.sol#L193](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/EigenPodManager.sol#L193)
 
 ```
-
 ##
 
-## [G-27] require() Should Be Used Instead Of assert()
-
-
-##
-
-## [G-28] Non-usage of specific imports
+## [G-23] Non-usage of specific imports
 
 INSTANCES : ALL CONTRACTS 
 
@@ -902,45 +955,14 @@ import {IProducer} from "src/interfaces/IProducer.sol";
 import {GlobalState, UserState} from "src/Common.sol";
 
 ```
-
-##
-
-## [G-29] Use uint256(1)/uint256(2) instead for true and false boolean states
-
-If you don't use boolean for storage you will avoid Gwarmaccess 100 gas. In addition, state changes of boolean from true to false can cost up to ~20000 gas rather than uint256(2) to uint256(1) that would cost significantly less
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
-
-415: withdrawalRootPending[withdrawalRoot] = true;
-554: withdrawalRootPending[withdrawalRoot] = false;
-597: strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]] = true;
-612: strategyIsWhitelistedForDeposit[strategiesToRemoveFromWhitelist[i]] = false;
-772: withdrawalRootPending[withdrawalRoot] = false;
-
-```
-[StrategyManager.sol#L415](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L415)
-
-
-
-```solidity
-
-```
-
-```solidity
-
-```
-```solidity
-
-```
-
 ## 
 
-## [G-30] It Costs More Gas To Initialize Variables To Zero Than To Let The Default Of Zero Be Applied
+## [G-24] It Costs More Gas To Initialize Variables To Zero Than To Let The Default Of Zero Be Applied
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
+38:  uint8 internal constant PAUSED_DEPOSITS = 0;
 358: for (uint256 i = 0; i < strategies.length;) {
 498: for (uint256 i = 0; i < strategiesLength;) {
 560: for (uint256 i = 0; i < strategiesLength;) {
@@ -969,13 +991,28 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 
 115: for (uint256 i = 0; i < claimableDelayedWithdrawalsLength; i++) {
 
-
 ```
 [DelayedWithdrawalRouter.sol#L115](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L115)
 
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+22:  uint8 internal constant PAUSED_DEPOSITS = 0;
+
+```
+[StrategyBase.sol#L22](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L22)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+22: uint256 constant internal UNPAUSE_ALL = 0;
+
+```
+[Pausable.sol#L22](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L22)
+
 ##
 
-## [G-31] Checking Non-Zero Amount Values Before Transferring to Minimize or avoid unnecessary Execution Costs 
+## [G-25] Checking Non-Zero Amount Values Before Transferring to Minimize or avoid unnecessary Execution Costs 
 
 Checking the value of the amount to ensure it is non-zero before transferring it can help you avoid unnecessary execution costs and ensure that the transfer is successful.
 
@@ -988,21 +1025,28 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 [StrategyBase.sol#L155](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L155)
 
 ```solidity
-FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
-
+661: token.safeTransferFrom(msg.sender, address(strategy), amount);
+664: shares = strategy.deposit(token, amount);
 
 ```
+[StrategyManager.sol#L661](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L661)
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+450:  _sendETH(recipient, amountWei);
+
+```
+[EigenPod.sol#L450](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPod.sol#L450)
 
 ##
 
-## [G-32] Avoid contract existence checks by using low level calls
-
-Prior to 0.8.10 the compiler inserted extra code, including EXTCODESIZE (100 gas), to check for contract existence for external function calls. In more recent solidity versions, the compiler will not insert these checks if the external call has a return value. Similar behavior can be achieved in earlier versions by using low-level calls, since low level calls never check for contract existence
 
 ##
 
-## [G-33] Don't declare the variables inside the loops
+## [G-26] Don't declare the variables inside the loops
 
 Declare outside the loop and only use inside
 
@@ -1010,7 +1054,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [G-34] Remove unused modifiers code to reduce the deployment cost
+## [G-27] Remove unused modifiers code to reduce the deployment cost
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
@@ -1027,6 +1071,55 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 
 ```
 [Pausable.sol#L43-L52](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L43-L52)
+
+##
+
+## [G-28] Remove the initializer modifier
+
+If we can just ensure that the initialize() function could only be called from within the constructor, we shouldn’t need to worry about it getting called again.
+
+In the EVM, the constructor’s job is actually to return the bytecode that will live at the contract’s address. So, while inside a constructor, your address (address(this)) will be the deployment address, but there will be no bytecode at that address! So if we check address(this).code.length before the constructor has finished, even from within a delegatecall, we will get 0. So now let’s update our initialize() function to only run if we are inside a constructor
+
+Now the Proxy contract’s constructor can still delegatecall initialize(), but if anyone attempts to call it again (after deployment) through the Proxy instance, or tries to call it directly on the above instance, it will revert because address(this).code.length will be nonzero.
+
+Also, because we no longer need to write to any state to track whether initialize() has been called, we can avoid the 20k storage gas cost. In fact, the cost for checking our own code size is only 2 gas, which means we have a 10,000x gas savings over the standard version. Pretty neat!
+
+### Recommended Mitigation:
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+146: function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
+        external
+        initializer
+
++ require(address(this).code.length == 0, 'not in constructor');
+
+```
+```solidity
+
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+51: function initialize(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) public virtual initializer {
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+84: function initialize(
+        IBeaconChainOracle _beaconChainOracle,
+        address initialOwner,
+        IPauserRegistry _pauserRegistry,
+        uint256 _initPausedStatus
+    ) external initializer {
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
+
+152: function initialize(address _podOwner) external initializer {
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+49:  function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
+
+```
 
 
 
