@@ -1,17 +1,45 @@
 ## [L-01] Missing out-of-bounds access check in `_removeStrategyFromStakerStrategyList` function
 
-**Type**: Data Validation
-**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
-
 ### Description
 
-If the [`_removeStrategyFromStakerStrategyList` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) is called by the [`recordOvercommittedBeaconChainETH` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) function in the [`StrategyManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol) contract is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+
+[src/contracts/core/StrategyManager.sol#L715-L740](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715-L740)
+
+```solidity
+       function _removeStrategyFromStakerStrategyList(address depositor, uint256 strategyIndex, IStrategy strategy) internal {
+        // if the strategy matches with the strategy index provided
+        if (stakerStrategyList[depositor][strategyIndex] == strategy) {
+            // replace the strategy with the last strategy in the list
+            stakerStrategyList[depositor][strategyIndex] =
+                stakerStrategyList[depositor][stakerStrategyList[depositor].length - 1];
+        } else {
+            //loop through all of the strategies, find the right one, then replace
+            uint256 stratsLength = stakerStrategyList[depositor].length;
+            uint256 j = 0;
+            for (; j < stratsLength;) {
+                if (stakerStrategyList[depositor][j] == strategy) {
+                    //replace the strategy with the last strategy in the list
+                    stakerStrategyList[depositor][j] = stakerStrategyList[depositor][stakerStrategyList[depositor].length - 1];
+                    break;
+                }
+                unchecked {
+                    ++j;
+                }
+            }
+            // if we didn't find the strategy, revert
+            require(j != stratsLength, "StrategyManager._removeStrategyFromStakerStrategyList: strategy not found");
+        }
+        // pop off the last entry in the list of strategies
+        stakerStrategyList[depositor].pop();
+    }
+```
 
 ### Proof of Concept
 
 Change the value of `uint256 beaconChainETHStrategyIndex` from `0` to `42` in `StrategyManagerUnit.t.sol` as shown below:
 
-https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/StrategyManagerUnit.t.sol#L185
+[src/test/unit/StrategyManagerUnit.t.sol#L185](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/test/unit/StrategyManagerUnit.t.sol#L185)
 
 ```diff
 -uint256 beaconChainETHStrategyIndex = 0;
@@ -30,12 +58,11 @@ Consider checking out-of-bounds access.
 
 ## [L-02] Missing zero address check for `address initOwner` in `initialize` function of `DelayedWithdrawalRouter` contract
 
-**Type**: Data Validation
-**Target**: [DelayedWithdrawalRouter.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol)
-
 ### Description
 
-The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L50) of the `DelayedWithdrawalRouter` contract does not have a zero address check for the `address initOwner`.
+The [`initialize`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53) function of the [`DelayedWithdrawalRouter`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol) contract does not have a zero address check for the `address initOwner`.
+
+[src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53)
 
 ```solidity
     function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
@@ -45,7 +72,7 @@ The [`initialize` function](https://github.com/code-423n4/2023-04-eigenlayer/blo
     }
 ```
 
-The code calls the [`_transferOwnership` function](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
+The code calls the [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) function from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
 
 ```solidity
     /**
@@ -67,17 +94,26 @@ Consider checking the zero value for the `address initOwner` argument.
 
 ## [L-03] Missing zero address check in the constructor of `EigenPodManager` contract
 
-**Type**: Data Validation
-**Target**: [EigenPodManager.sol](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol)
-
 ### Description
 
-The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76) of `EigenPodManager` has no zero value check for the following arguments:
+The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82) of the [`EigenPodManager`](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol) contract has no zero value check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IBeacon _eigenPodBeacon`
 - `IStrategyManager _strategyManager`
 - `ISlasher _slasher`
+
+[src/contracts/pods/EigenPodManager.sol#L76-L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82)
+
+```solidity
+    constructor(IETHPOSDeposit _ethPOS, IBeacon _eigenPodBeacon, IStrategyManager _strategyManager, ISlasher _slasher) {
+        ethPOS = _ethPOS;
+        eigenPodBeacon = _eigenPodBeacon;
+        strategyManager = _strategyManager;
+        slasher = _slasher;
+        _disableInitializers();
+    }
+```
 
 ### Recommendation
 
@@ -85,16 +121,32 @@ Consider checking the zero address for the four constructor arguments.
 
 ## [L-04] Missing zero address check in the constructor of `EigenPod` contract
 
-**Type**: Data Validation
-**Target**: [EigenPod.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol)
-
 ### Description
 
-The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136) of `EigenPod` has no zero address check for the following arguments:
+The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149) of the [`EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol) contract has no zero address check for the following arguments:
 
 - `IETHPOSDeposit _ethPOS`
 - `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
 - `IEigenPodManager _eigenPodManager`
+
+[src/contracts/pods/EigenPod.sol#L136-L149](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149)
+
+```solidity
+    constructor(
+        IETHPOSDeposit _ethPOS,
+        IDelayedWithdrawalRouter _delayedWithdrawalRouter,
+        IEigenPodManager _eigenPodManager,
+        uint256 _REQUIRED_BALANCE_WEI
+    ) {
+        ethPOS = _ethPOS;
+        delayedWithdrawalRouter = _delayedWithdrawalRouter;
+        eigenPodManager = _eigenPodManager;
+        REQUIRED_BALANCE_WEI = _REQUIRED_BALANCE_WEI;
+        REQUIRED_BALANCE_GWEI = uint64(_REQUIRED_BALANCE_WEI / GWEI_TO_WEI);
+        require(_REQUIRED_BALANCE_WEI % GWEI_TO_WEI == 0, "EigenPod.contructor: _REQUIRED_BALANCE_WEI is not a whole number of gwei");
+        _disableInitializers();
+    }
+```
 
 ### Recommendation
 
@@ -102,12 +154,23 @@ Consider checking the zero address for the three constructor arguments.
 
 ## [L-05] Missing zero value check in `deposit` function
 
-**Type**: Data Validation
-**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
-
 ### Description
 
-The [`deposit` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78) in `StrategyBase.sol` has no zero value check for the `uint256 amount` argument.
+The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78-L112) function in the [`StrategyBase`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol) contract has no zero value check for the `uint256 amount` argument.
+
+[src/contracts/strategies/StrategyBase.sol#L78-L87](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78-L87)
+
+```solidity
+      function deposit(IERC20 token, uint256 amount)
+        external
+        virtual
+        override
+        onlyWhenNotPaused(PAUSED_DEPOSITS)
+        onlyStrategyManager
+        returns (uint256 newShares)
+    {
+        require(token == underlyingToken, "StrategyBase.deposit: Can only deposit underlyingToken");
+```
 
 ### Recommendation
 
@@ -115,12 +178,29 @@ Consider checking the zero value for the `uint256 amount` argument.
 
 ## [L-06] Missing array length check in `queueWithdrawal` function
 
-**Type**: Data Validation
-**Target**: [StrategyManager.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol)
-
 ### Description
 
-The [`queueWithdrawal` function](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329) in StrategyManager.sol does not validate the length of the `uint256[] strategyIndexes` input argument.
+The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L429) function in the [`StrategyManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol) contract does not validate the length of the `uint256[] strategyIndexes` input argument.
+
+[src/contracts/core/StrategyManager.sol#L329-L344](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L344)
+
+```solidity
+ function queueWithdrawal(
+        uint256[] calldata strategyIndexes,
+        IStrategy[] calldata strategies,
+        uint256[] calldata shares,
+        address withdrawer,
+        bool undelegateIfPossible
+    )
+        external
+        onlyWhenNotPaused(PAUSED_WITHDRAWALS)
+        onlyNotFrozen(msg.sender)
+        nonReentrant
+        returns (bytes32)
+    {
+        require(strategies.length == shares.length, "StrategyManager.queueWithdrawal: input length mismatch");
+        require(withdrawer != address(0), "StrategyManager.queueWithdrawal: cannot withdraw to zero address");
+```
 
 ### Recommendation
 
@@ -128,14 +208,13 @@ Consider checking the length of the `uint256[] strategyIndexes` argument.
 
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
-**Type**: Code Quality
-**Target**: [StrategyBase.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol)
-
 ### Description
 
-The following comment for the `sharesToUnderlying` function is misleading:
+The following [comment](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L182) for the [`sharesToUnderlying`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L186-L188) function in the [`StrategyBase`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol) contract is misleading:
 
-```
+[src/contracts/strategies/StrategyBase.sol#L182](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L182)
+
+```text
 * @notice In contrast to `sharesToUnderlyingView`, this function **may** make state modifications
 ```
 
@@ -147,14 +226,13 @@ Consider updating the comment for `sharesToUnderlying` function to accurately re
 
 ## [N-02] Misleading comments for `Merkle` contract
 
-**Type**: Code Quality
-**Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
-
 ## Description
 
-There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle.sol`, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
+There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
 
-```diff
+[src/contracts/libraries/Merkle.sol#L6-L19](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19)
+
+```text
 /**
  * @dev These functions deal with verification of Merkle Tree proofs.
  *
