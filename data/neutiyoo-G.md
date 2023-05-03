@@ -1,10 +1,8 @@
 ## [G-01] Optimize `merkleizeSha256` function for gas-efficiency
 
-**Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
-
 ### Description
 
-Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153) function is correct, it can be more gas-efficient by making use of the following optimizations:
+Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153) function in the [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract is correct, it can be more gas-efficient by making use of the following optimizations:
 
 **1. In-place Computation**
 
@@ -145,11 +143,12 @@ Consider optimizing `merkleizeSha256` by using in-place computation, assembly, a
 
 ## [G-02] Use unchecked arithmetic in `processInclusionProofSha256` and `processInclusionProofKeccak` functions
 
-**Target**: [Merkle.sol](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol)
-
 ### Description
 
-The `processInclusionProofSha256` and `processInclusionProofKeccak` functions in `Merkle.sol` include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop.
+The [`processInclusionProofSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L99-L121) and [`processInclusionProofKeccak`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L48-L70) functions in [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop.
+
+[src/contracts/libraries/Merkle.sol#L50](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L50)
+[src/contracts/libraries/Merkle.sol#L101](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L101)
 
 ```solidity
 for (uint256 i = 32; i <= proof.length; i+=32) {
