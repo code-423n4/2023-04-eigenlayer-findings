@@ -24,3 +24,6 @@ function completeQueuedWithdrawals(Input[] calldata intputs) {
 ```
 
 2. Same issue as 1.) for slashShares
+
+
+3. deposit/withdraw in IStrategy does not need to take token, if only onlyStrategyManager can call and only 1 rewardToken is expected per strategy.
