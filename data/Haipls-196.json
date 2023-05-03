@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Haipls",
+  "risk": "3",
+  "title": "A user's funds cannot be slashed if user were frozen during the withdrawal waiting period.",
+  "issueId": 196,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/196"
+}
