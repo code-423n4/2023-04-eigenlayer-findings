@@ -26,3 +26,16 @@ The function comment on `StrategyManager.completeQueuedWithdrawal()` is missing 
 -         * 2) if `staker` is a contract, then `signature` must will be checked according to EIP-1271
 +         * 2) if `staker` is a contract, then `signature` must be checked according to EIP-1271
 ```
+## Events associated with setter functions
+Consider having events associated with setter functions emit both the new and old values instead of just the new value.
+
+Here is a specific instance entailed:
+
+[File: EigenPodManager.sol#L186-L189](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L186-L189)
+
+```solidity
+    function _updateBeaconChainOracle(IBeaconChainOracle newBeaconChainOracle) internal {
+        beaconChainOracle = newBeaconChainOracle;
+        emit BeaconOracleUpdated(address(newBeaconChainOracle));
+    }
+```
