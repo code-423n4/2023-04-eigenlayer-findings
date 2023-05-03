@@ -45,8 +45,10 @@ Report contents changed:  # LOW FINDINGS
 
 ##
 
-
 ## [L-1] initialize() functions could be front run 
+
+initialize() function can be called anybody when the contract is not initialized.
+More importantly, if someone else runs this function, they will have full authority because of the transferOwnership function
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -93,40 +95,7 @@ function initialize(
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/DelayedWithdrawalRouter.sol#L49
 
 
-
-##
-
-## [L-2] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
-
-See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
-
-150: DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
-276: bytes32 domain_separator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), block.chainid, address(this)));
-
-```
-[StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
-
-##
-
-## [L-3] Prevent division by 0
-
-On several locations in the code precautions are not being taken for not dividing by 0, this will revert the code.
-These functions can be called with 0 value in the input, this value is not checked for being bigger than 0, that means in some scenarios this can potentially trigger a division by zero
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
-
-152: amountToSend = (_tokenBalance() * amountShares) / priorTotalShares;
-
-```
-[StrategyBase.sol#L152](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L152)
-
-##
-
-## [L-4] Missing Event for critical parameters init and change
+## [L-3] Missing Event for critical parameters init and change
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPod.sol
@@ -151,17 +120,15 @@ FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
 [StrategyBase.sol#L56-L59](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#L56-L59)
 
 
-
-
-Description
+### Description
 Events help non-contract tools to track changes, and events prevent users from being surprised by changes.
 
-Recommendation
+### Recommendation
 Add Event-Emit 
 
 ##
 
-## [L-5] Use right way to convert bytes to bytes32 
+## [L-4] Use right way to convert bytes to bytes32 
 
 If _podWithdrawalCredentials() returns a value of type bytes, then using bytes32(_podWithdrawalCredentials()) to convert it to a bytes32 variable is not the correct way to do it.
 
@@ -186,7 +153,7 @@ bytes32 podWithdrawalCreds32 = bytes32(uint256(abi.encodePacked(podWithdrawalCre
 
 ##
 
-## [L-6] Owner can renounce the ownership 
+## [L-5] Owner can renounce the ownership 
 
 # Description:
 Typically, the contract’s owner is the account that deploys the contract. As a result, the owner is able to perform certain privileged activities.
@@ -238,7 +205,7 @@ We recommend to either reimplement the function to disable it or to clearly spec
 
 ##
 
-## [L-7] LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG
+## [L-6] LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG
 
 The project contracts in scope are using low level calls with solidity version before 0.8.14 which can result in optimizer bug
 
@@ -260,7 +227,7 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/Merkle.sol
 ### Recommended Mitigation Steps
 Consider upgrading to at least solidity v0.8.15.
 
-## [L-8] OUTDATED COMPILER
+## [L-7] OUTDATED COMPILER
 
 The pragma version used are: 0.8.12
 
@@ -312,7 +279,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 ```
 ##
 
-## [L-9] Lack of Sanity/Threshold/Limit Checks
+## [L-8] Lack of Sanity/Threshold/Limit Checks
 
 Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation as well as zero address checks for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
 
@@ -357,7 +324,7 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 ##
 
-## [L-10] Function Calls in Loop Could Lead to Denial of Service
+## [L-9] Function Calls in Loop Could Lead to Denial of Service
 
 Function calls made in unbounded loop are error-prone with potential resource exhaustion as it can trap the contract due to the gas limitations or failed transactions
 
@@ -389,7 +356,7 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ##
 
-## [L-11] Project Upgrade and Stop Scenario should be
+## [L-10] Project Upgrade and Stop Scenario should be
 
 At the start of the project, the system may need to be stopped or upgraded, I suggest you have a script beforehand and add it to the documentation. This can also be called an ” EMERGENCY STOP (CIRCUIT BREAKER) PATTERN “.
 
@@ -398,7 +365,7 @@ https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.s
 
 ##
 
-## [L-12] Front running attacks by the onlyOwner
+## [L-11] Front running attacks by the onlyOwner
 
 
 ```solidity
@@ -418,7 +385,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 ##
 
-## [L-13] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
+## [L-12] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
 
 It's still good practice to apply the reentry model as a precautionary measure in case the code is changed in the future to remove the onlyOwner modifier or the contract is used as a base contract for other contracts.
 
@@ -438,19 +405,9 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 [StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
 
 
-```solidity
-
-```
-
-Recommended Mitigation:
-
-```solidity
-
-```
-
 ##
 
-## [L-14] Unused Modifiers 
+## [L-13] Unused Modifiers block
 
 If a modifier is intended to enforce a certain condition on a function, but it's not actually used, this can lead to security issues or unintended behavior in the contract. Therefore, it's a good practice to remove any unused modifiers from the contract to keep the code clean and reduce the risk of bugs or vulnerabilities.
 
@@ -473,6 +430,21 @@ FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
 ### Recommended Mitigations:
 
 Remove any unused modifiers from the contract to keep the code clean and reduce the risk of bugs or vulnerabilities
+
+##
+
+## [L-14] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
+
+See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+150: DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
+276: bytes32 domain_separator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), block.chainid, address(this)));
+
+```
+[StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
 
 
 
@@ -984,6 +956,23 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L80
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L99
+
+##
+
+## [NC-20] For critical changes emit both old and new values 
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+186: function _updateBeaconChainOracle(IBeaconChainOracle newBeaconChainOracle) internal {
+        beaconChainOracle = newBeaconChainOracle;
+        emit BeaconOracleUpdated(address(newBeaconChainOracle));
+    }
+
+```
+[EigenPodManager.sol#L186-L189](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L186-L189)
+
+
 
 
 
