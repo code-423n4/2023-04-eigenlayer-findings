@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "rvierdiiev",
+  "risk": "2",
+  "title": "Withdrawal request that already passed needed blocks amount still can be slashable when delegator is freezed",
+  "issueId": 178,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/178"
+}
