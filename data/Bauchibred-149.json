@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Bauchibred",
+  "risk": "2",
+  "title": "StrategyManager.sol: Undesired behaviour if the same token is listed in the `IERC20[] calldata tokens` array twice/multiple times",
+  "issueId": 149,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/149"
+}
