@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "foxb868",
+  "risk": "2",
+  "title": "Failure to Validate Withdrawal Delay Blocks in DelayedWithdrawalRouter Contract.",
+  "issueId": 240,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/240"
+}
