@@ -21,7 +21,13 @@ The use of unchecked arithmetic for `uint i` is more gas-efficient as it skips c
 
 The function `merkleizeSha256Optimized` provided below is an optimized version of the `merkleizeSha256` function.
 
+src/contracts/libraries/MerkleOptimized.sol
+
 ```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity =0.8.12;
+
+library MerkleOptimized {
     /**
      * @notice Returns the Merkle root of a tree created from a set of leaves using SHA256 as its hash function.
      * @param leaves The leaves of the Merkle tree. This parameter is modified during the execution of the function and must not be used again afterwards.
@@ -69,6 +75,7 @@ The function `merkleizeSha256Optimized` provided below is an optimized version o
 
         return leaves[0];
     }
+}
 ```
 
 **Impact**
@@ -89,31 +96,34 @@ The data shows a significant increase in gas efficiency with the use of `merklei
 
 The test codes are the following:
 
+src/test/unit/Merkle.t.sol
+
 ```solidity
-// SPDX-License-Identifier: UNLICENSED
+// SPDX-License-Identifier: BUSL-1.1
 pragma solidity =0.8.12;
 
-import "forge-std/Test.sol";
-import "../src/Merkle.sol";
+import {Test} from "forge-std/Test.sol";
+import {Merkle} from "../../contracts/libraries/Merkle.sol";
+import {MerkleOptimized} from "../../contracts/libraries/MerkleOptimized.sol";
 
 contract MerkleMock {
     function merkleizeSha256(
-        bytes32[] calldata gen
+        bytes32[] calldata leaves
     ) external pure returns (bytes32) {
-        return Merkle.merkleizeSha256(gen);
+        return Merkle.merkleizeSha256(leaves);
     }
 
     function merkleizeSha256Optimized(
-        bytes32[] calldata gen
+        bytes32[] calldata leaves
     ) external pure returns (bytes32) {
-        return Merkle.merkleizeSha256Optimized(gen);
+        return MerkleOptimized.merkleizeSha256Optimized(leaves);
     }
 }
 
 contract MerkleTest is Test {
     MerkleMock public c;
 
-    function setUp() public {
+    function setUp() external {
         c = new MerkleMock();
     }
 
@@ -125,7 +135,7 @@ contract MerkleTest is Test {
         return leaves;
     }
 
-    function testMerkleizeSha256Equivalence() public {
+    function testMerkleizeSha256Equivalence() external {
         for (uint i = 2; i <= 1024; i *= 2) {
             assertEq(
                 c.merkleizeSha256(gen(i)),
