@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Evo",
+  "risk": "3",
+  "title": "A Malicious validator can frontrun 32ETH deposit",
+  "issueId": 387,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/387"
+}
