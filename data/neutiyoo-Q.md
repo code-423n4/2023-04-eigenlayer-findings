@@ -380,7 +380,7 @@ The second occurrence of `amount` is misleading and may confuse developers.
 
 ### Recommendation
 
-Remove the second occurrence of amount from the NatSpec comments in both `StrategyManager.sol` and `IStrategyManager.sol`.
+Remove the second occurrence of `amount` from the NatSpec comments in both `StrategyManager.sol` and `IStrategyManager.sol`.
 
 ```diff
 -    * @param amount is the amount of token to be deposited in the strategy by the depositor
