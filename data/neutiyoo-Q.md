@@ -87,7 +87,7 @@ Missing input validation:
 
 ### Recommendation
 
-Consider checking the zero address for the constructor arguments.
+Check the zero address for the constructor arguments.
 
 ## [L-02] Missing zero address checks in some `initialize` functions
 
@@ -189,13 +189,13 @@ Missing input validation:
 
 ### Recommendation
 
-Consider checking the zero address for the `initialize` function arguments.
+Check the zero address for the `initialize` function arguments.
 
 ## [L-03] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
 
 ### Description
 
-If the [`_removeStrategyFromStakerStrategyList`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715) function in the [`StrategyManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol) contract is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+If the `_removeStrategyFromStakerStrategyList` function in the `StrategyManager` contract is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
 
 [src/contracts/core/StrategyManager.sol#L715-L740](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715-L740)
 
@@ -247,39 +247,15 @@ This modification will trigger the following error:
 
 ### Recommendation
 
-Consider checking out-of-bounds access.
+Check out-of-bounds access.
 
-## [L-04] Missing zero value check in the `deposit` function
-
-### Description
-
-The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78-L112) function in the [`StrategyBase`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol) contract has no zero value check for the `uint256 amount` argument.
-
-[src/contracts/strategies/StrategyBase.sol#L78-L87](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78-L87)
-
-```solidity
-      function deposit(IERC20 token, uint256 amount)
-        external
-        virtual
-        override
-        onlyWhenNotPaused(PAUSED_DEPOSITS)
-        onlyStrategyManager
-        returns (uint256 newShares)
-    {
-        require(token == underlyingToken, "StrategyBase.deposit: Can only deposit underlyingToken");
-```
-
-### Recommendation
-
-Consider checking the zero value for the `uint256 amount` argument.
-
-## [L-05] Missing array length check in the `queueWithdrawal` function
+## [L-04] Missing array length check in the `queueWithdrawal` function
 
 ### Description
 
-The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L429) function in the [`StrategyManager`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol) contract does not validate the length of the `uint256[] strategyIndexes` input argument.
+The `queueWithdrawal` function in the `StrategyManager` contract does not validate the length of the `uint256[] strategyIndexes` input argument.
 
-[src/contracts/core/StrategyManager.sol#L329-L344](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L344)
+[src/contracts/core/src/contracts/core/StrategyManager.sol#L329-L429](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L429)
 
 ```solidity
  function queueWithdrawal(
@@ -297,17 +273,20 @@ The [`queueWithdrawal`](https://github.com/code-423n4/2023-04-eigenlayer/blob/ma
     {
         require(strategies.length == shares.length, "StrategyManager.queueWithdrawal: input length mismatch");
         require(withdrawer != address(0), "StrategyManager.queueWithdrawal: cannot withdraw to zero address");
+        ...
 ```
+
+Currently, the function assumes that the length of `strategyIndexes` is equal to the length of `strategies` and `shares`, which may not always be the case.
 
 ### Recommendation
 
-Consider checking the length of the `uint256[] strategyIndexes` argument.
+Add a check to ensure the length of the uint256[] strategyIndexes argument is the same as the other input arrays.
 
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
 ### Description
 
-The following [comment](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L182) for the [`sharesToUnderlying`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L186-L188) function in the [`StrategyBase`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol) contract is misleading:
+The following comment for the `sharesToUnderlying` function in the [`StrategyBase`] contract is misleading:
 
 [src/contracts/strategies/StrategyBase.sol#L182](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L182)
 
@@ -325,7 +304,7 @@ Consider updating the comment for `sharesToUnderlying` function to accurately re
 
 ## Description
 
-There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
+There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle` contract, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
 
 [src/contracts/libraries/Merkle.sol#L6-L19](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19)
 
