@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "pontifex",
+  "risk": "2",
+  "title": "Temporary blocking withdrawals because of `slashQueuedWithdrawal` function incorrectness",
+  "issueId": 435,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/435"
+}
