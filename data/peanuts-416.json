@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "peanuts",
+  "risk": "2",
+  "title": "MAX_WITHDRAWAL_DELAY_BLOCKS assumes that block time is always 12 seconds",
+  "issueId": 416,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/416"
+}
