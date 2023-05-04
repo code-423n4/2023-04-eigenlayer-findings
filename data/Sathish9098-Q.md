@@ -8,15 +8,19 @@ Report contents changed:  # LOW FINDINGS
 | [L-4]| Owner can renounce the ownership   | - |
 | [L-5]| LOW LEVEL CALLS WITH SOLIDITY VERSION 0.8.14 CAN RESULT IN OPTIMISER BUG  | 2 |
 | [L-6]| OUTDATED COMPILER  | 24 |
-| [L-7]| Lack of Sanity/Threshold/Limit Checks  | 5 |
+| [L-7]| Lack of Sanity/Threshold/Limit Checks for uint256  | 5 |
 | [L-8]| Function Calls in Loop Could Lead to Denial of Service  | 7 |
 | [L-9]| Project Upgrade and Stop Scenario should be  | - |
-| [L-10]|  Front running attacks by the onlyOwner | 1 |
+| [L-10]| Front running attacks by the onlyOwner | 1 |
 | [L-11]| Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern| 1 |
-| [L-12]|  Unused Modifiers block  | 2 |
-| [L-13]| Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator | 3 |
-| [L-14]| Insufficient coverage | - |
-| [L-15]| Missing Contract-existence Checks Before Low-level Calls | 2 |
+| [L-12]| Unused Modifiers block  | 2 |
+| [L-13]| Insufficient coverage | - |
+| [L-14]| Missing Contract-existence Checks Before Low-level Calls | 2 |
+| [L-15]| Not Completely Using OpenZeppelin upgradable Contracts | - |
+| [L-16]| Use OpenZeppelin PausableUpgradeable instead of Pausable | 4 |
+| [L-17]| Use OpenZeppelin AddressUpgradeable.sol instead of Address.sol | 1 |
+
+
 
 
  # NON CRITICAL FINDINGS
@@ -283,9 +287,9 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
 ```
 ##
 
-## [L-7] Lack of Sanity/Threshold/Limit Checks
+## [L-7] Lack of sanity/threshold/limit checks for uint256
 
-Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation as well as zero address checks for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
+Devoid of sanity/threshold/limit checks, critical parameters can be configured to invalid values, causing a variety of issues and breaking expected interactions within/between contracts. Consider adding proper uint256 validation for critical changes. A worst case scenario would render the contract needing to be re-deployed in the event of human/accidental errors that involve value assignments to immutable variables. If the validation procedure is unclear or too complex to implement on-chain, document the potential issues that could produce invalid values
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -334,28 +338,15 @@ Function calls made in unbounded loop are error-prone with potential resource ex
 
 
 ```solidity
+FILE : 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
-        for (uint256 i = 0; i < strategiesToWhitelistLength;) {
-            // change storage and emit event only if strategy is not already in whitelist
-            if (!strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]]) {
-                strategyIsWhitelistedForDeposit[strategiesToWhitelist[i]] = true;
-                emit StrategyAddedToDepositWhitelist(strategiesToWhitelist[i]);
-            }
-            unchecked {
-                ++i;
-            }
-
-
+for(uint256 i = 0; i < queuedWithdrawals.length; i++) {
+            _completeQueuedWithdrawal(queuedWithdrawals[i], tokens[i], middlewareTimesIndexes[i], receiveAsTokens[i]);
+        }
 ```
-[StrategyManager.sol#L594-L602](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L594-L602)
-
-https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L609-L617
-
-https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L466-L468
+[StrategyManager.sol#L466-L468](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L466-L468)
 
 https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L498-L505
-
-
 
 
 ##
@@ -369,7 +360,9 @@ https://github.com/maxwoe/solidity_patterns/blob/master/security/EmergencyStop.s
 
 ##
 
-## [L-10] Front running attacks by the onlyOwner
+## [L-10] Front running attacks by the onlyOwner or onlyPauser
+
+ The onlyOwner or onlyPauser modifiers, front running attacks can occur if the owner or pauser of the contract is malicious and attempts to manipulate the transaction order to their advantage
 
 
 ```solidity
@@ -379,15 +372,41 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
         _setStrategyWhitelister(newStrategyWhitelister);
     }
 
+582: function setWithdrawalDelayBlocks(uint256 _withdrawalDelayBlocks) external onlyOwner {
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
+
 ```
 [StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
+
+```solidity
+File: src/contracts/permissions/Pausable.sol
+
+71:       function pause(uint256 newPausedStatus) external onlyPauser {
+
+81:       function pauseAll() external onlyPauser {
+
+92:       function unpause(uint256 newPausedStatus) external onlyUnpauser {
+
+```
+[Pausable.sol#L71](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/permissions/Pausable.sol#L71)
+
+```solidity
+File: src/contracts/permissions/PauserRegistry.sol
+
+32:       function setPauser(address newPauser) external onlyUnpauser {
+
+37:       function setUnpauser(address newUnpauser) external onlyUnpauser {
+
+```
+[PauserRegistry.sol#L32](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/permissions/PauserRegistry.sol#L32)
 
 
 ##
 
-## [L-11] Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern
+## [L-11] Even with the onlyOwner,onlyEigenPod,onlyStrategyManager,onlyEigenPodOwner,onlyEigenPodManager  modifiers, it is best practice to use the re-entrancy pattern
 
-It's still good practice to apply the reentry model as a precautionary measure in case the code is changed in the future to remove the onlyOwner modifier or the contract is used as a base contract for other contracts.
+It's still good practice to apply the reentry model as a precautionary measure in case the code is changed in the future to remove the onlyOwner,onlyEigenPod,onlyStrategyManager,onlyEigenPodOwner,onlyEigenPodManager modifiers or the contract is used as a base contract for other contracts.
 
 Using the reentry modifier provides an additional layer of security and ensures that your code is protected from potential reentry attacks regardless of any other security measures you take.
 
@@ -395,15 +414,38 @@ So even if you followed the "check-effects-interactions" pattern correctly, it's
 
 
 ```solidity
-FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 
-587: function setStrategyWhitelister(address newStrategyWhitelister) external onlyOwner {
-        _setStrategyWhitelister(newStrategyWhitelister);
-    }
+File: src/contracts/pods/EigenPodManager.sol
+
+127:      function restakeBeaconChainETH(address podOwner, uint256 amount) external onlyEigenPod(podOwner) {
+
+139:      function recordOvercommittedBeaconChainETH(address podOwner, uint256 beaconChainETHStrategyIndex, uint256 amount) external onlyEigenPod(podOwner) {
+
+150       function withdrawRestakedBeaconChainETH(address podOwner, address recipient, uint256 amount)
+151:          external onlyStrategyManager onlyWhenNotPaused(PAUSED_WITHDRAW_RESTAKED_ETH)
+
+161:      function updateBeaconChainOracle(IBeaconChainOracle newBeaconChainOracle) external onlyOwner {
+
+166:      function _deployPod() internal onlyWhenNotPaused(PAUSED_NEW_EIGENPODS) returns (IEigenPod) {
+
 
 ```
-[StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
+[EigenPodManager.sol#L127](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/EigenPodManager.sol#L127)
 
+```solidity
+FILE: src/contracts/pods/EigenPod.sol
+
+437       function withdrawRestakedBeaconChainETH(
+438           address recipient,
+439           uint256 amountWei
+440       )
+441           external
+442:          onlyEigenPodManager
+
+454:      function withdrawBeforeRestaking() external onlyEigenPodOwner hasNeverRestaked {
+
+```
+[pods/EigenPod.sol#L175-L184](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/pods/EigenPod.sol#L175-L184)
 
 ##
 
@@ -433,22 +475,7 @@ Remove any unused modifiers from the contract to keep the code clean and reduce 
 
 ##
 
-## [L-13] Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator
-
-See this [issue](https://github.com/code-423n4/2021-04-maple-findings/issues/2) from a prior contest for details
-
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
-
-150: DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
-276: bytes32 domain_separator = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), block.chainid, address(this)));
-
-```
-[StrategyManager.sol#L150](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L150)
-
-##
-
-## [L-14] Insufficient coverage
+## [L-13] Insufficient coverage
 
 Description: The test coverage rate of the project is ~93%. Testing all functions is best practice in terms of security criteria. Due to its capacity, test coverage is expected to be 100%
 
@@ -461,7 +488,7 @@ Scoping Details
 
 ##
 
-## [L-15] Missing Contract-existence Checks Before Low-level Calls
+## [L-14] Missing Contract-existence Checks Before Low-level Calls
 
 Low-level calls return success if there is no code present at the specified address.
 
@@ -474,9 +501,61 @@ FILE: 2023-04-eigenlayer/src/contracts/libraries/Merkle.sol
 ```
 [Merkle.sol#L107](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L107)
 
+##
 
+## [L-15] Not Completely Using OpenZeppelin upgradable Contracts
 
+OpenZeppelin maintains a library of standard, audited, community-reviewed, and battle-tested smart contracts. Instead of always importing these contracts, the protocol project re-implements them in some cases. This increases the amount of code that the protocol team will have to maintain and miss all the improvements and bug fixes that the OpenZeppelin team is constantly implementing with the help of the community.
 
+Consider importing the OpenZeppelin contracts instead of re-implementing or copying them. These contracts can be extended to add the extra functionalities required if need be
+
+Here is one of the instances entailed:
+
+https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/security/ReentrancyGuardUpgradeable.sol#L1-L2
+
+```
+// SPDX-License-Identifier: MIT
+// OpenZeppelin Contracts v4.4.1 (security/ReentrancyGuard.sol)
+
+```
+##
+
+## [L-16] Use OpenZeppelin PausableUpgradeable instead of Pausable
+
+PausableUpgradeable contract is designed to be used with the Upgradeable contract, which allows for the contract's logic to be upgraded without losing the contract's state.
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+12: import "../permissions/Pausable.sol";
+
+FILE: 2023-04-eigenlayer/src/contracts/strategies/StrategyBase.sol
+
+5: import "../permissions/Pausable.sol";
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
+
+19: import "../permissions/Pausable.sol";
+
+FILE: 2023-04-eigenlayer/src/contracts/pods/DelayedWithdrawalRouter.sol
+
+9: import "../permissions/Pausable.sol";
+
+```
+
+##
+
+## [L-17] Use OpenZeppelin AddressUpgradeable.sol instead of Address.sol
+
+AddressUpgradeable.sol is a contract from the OpenZeppelin library that provides utility functions for working with Ethereum addresses in upgradeable contracts
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+5: import "@openzeppelin/contracts/utils/Address.sol";
+
+```
+[StrategyManager.sol#L5](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L5)
 
 ##
 
@@ -986,16 +1065,42 @@ https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460
 
 ## [NC-20] For critical changes emit both old and new values 
 
-```solidity
-FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
-186: function _updateBeaconChainOracle(IBeaconChainOracle newBeaconChainOracle) internal {
-        beaconChainOracle = newBeaconChainOracle;
-        emit BeaconOracleUpdated(address(newBeaconChainOracle));
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
+
+587: function setStrategyWhitelister(address newStrategyWhitelister) external onlyOwner {
+        _setStrategyWhitelister(newStrategyWhitelister);
+    }
+
+582: function setWithdrawalDelayBlocks(uint256 _withdrawalDelayBlocks) external onlyOwner {
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
     }
 
 ```
-[EigenPodManager.sol#L186-L189](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/pods/EigenPodManager.sol#L186-L189)
+[StrategyManager.sol#L587-L589](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L587-L589)
+
+```solidity
+File: src/contracts/permissions/Pausable.sol
+
+71:       function pause(uint256 newPausedStatus) external onlyPauser {
+
+81:       function pauseAll() external onlyPauser {
+
+92:       function unpause(uint256 newPausedStatus) external onlyUnpauser {
+
+```
+[Pausable.sol#L71](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/permissions/Pausable.sol#L71)
+
+```solidity
+File: src/contracts/permissions/PauserRegistry.sol
+
+32:       function setPauser(address newPauser) external onlyUnpauser {
+
+37:       function setUnpauser(address newUnpauser) external onlyUnpauser {
+
+```
+[PauserRegistry.sol#L32](https://github.com/code-423n4/2023-04-eigenlayer/blob/398cc428541b91948f717482ec973583c9e76232/src/contracts/permissions/PauserRegistry.sol#L32)
 
 
 
@@ -1014,46 +1119,3 @@ FILE: 2023-04-eigenlayer/src/contracts/pods/EigenPodManager.sol
 
 
 
-
-[L‑01]	Events are missing sender information	6
-[L‑02]	The owner is a single point of failure and a centralization risk	27
-[L‑03]	Use Ownable2Step's transfer function rather than Ownable's for transfers of ownership	2
-[L‑04]	Unsafe downcast	3
-[L‑05]	Loss of precision	4
-[L‑06]	Upgradeable contract not initialized	6
-[L‑07]	Array lengths not checked	3
-[L‑08]	Missing checks for address(0x0) when assigning values to address state variables	1
-[L‑09]	abi.encodePacked() should not be used with dynamic types when passing the result to a hash function such as keccak256()	2
-[L‑10]	Use Ownable2Step rather than Ownable	3
-
-[N‑01]	Constants in comparisons should appear on the left side	118
-[N‑02]	Variables need not be initialized to zero	15
-[N‑03]	Imports could be organized more systematically	13
-[N‑04]	Large numeric literals should use underscores for readability	14
-[N‑05]	Upgradeable contract is missing a __gap[50] storage variable to allow for new storage variables in later versions	1
-[N‑06]	Import declarations should import specific identifiers, rather than the whole file	71
-[N‑07]	Missing initializer modifier on constructor	1
-[N‑08]	Unused file	1
-[N‑09]	The nonReentrant modifier should occur before all other modifiers	9
-[N‑10]	Adding a return statement when the function defines a named return variable, is redundant	2
-[N‑11]	public functions not called by the contract should be declared external instead	1
-[N‑12]	constants should be defined rather than using magic numbers	56
-[N‑13]	Cast is more restrictive than the type of the variable being assigned	1
-[N‑14]	Numeric values having to do with time should use time units for readability	1
-[N‑15]	Use a more recent version of solidity	3
-[N‑16]	Expressions for constant values such as a call to keccak256(), should use immutable rather than constant	2
-[N‑17]	Constant redefined elsewhere	6
-[N‑18]	Inconsistent spacing in comments	24
-[N‑19]	Lines are too long	23
-[N‑20]	Variable names that consist of all capital letters should be reserved for constant/immutable variables	2
-[N‑21]	Typos	21
-[N‑22]	Misplaced SPDX identifier	1
-[N‑23]	File is missing NatSpec	1
-[N‑24]	NatSpec is incomplete	41
-[N‑25]	Event is missing indexed fields	23
-[N‑26]	Consider using delete rather than assigning zero to clear values	1
-[N‑27]	Avoid the use of sensitive terms	31
-[N‑28]	Contracts should have full test coverage	1
-[N‑29]	Large or complicated code bases should implement invariant tests	1
-[N‑30]	Function ordering does not follow the Solidity style guide	7
-[N‑31]	Contract does not follow the Solidity style guide's suggested layout ordering	7
