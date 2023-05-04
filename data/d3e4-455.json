@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "d3e4",
+  "risk": "2",
+  "title": "Loss of funds on deposit when `totalShares > 0 && priorTokenBalance == 0`",
+  "issueId": 455,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/455"
+}
