@@ -183,11 +183,11 @@ Missing zero address check:
 
 Add zero address checks.
 
-## [L-02] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
+## [L-02] Missing out-of-bounds access check
 
 ### Description
 
-If the `_removeStrategyFromStakerStrategyList` function in the `StrategyManager` contract is called by the [`recordOvercommittedBeaconChainETH`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L182) function with invalid `uint256 beaconChainETHStrategyIndex` parameter, then it can cause out-of-bounds access error.
+The `_removeStrategyFromStakerStrategyList` function in the `StrategyManager` contract can cause an out-of-bounds access error because there is no validation for the `strategyIndex` parameter.
 
 [src/contracts/core/StrategyManager.sol#L715-L740](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L715-L740)
 
@@ -239,13 +239,13 @@ This modification will trigger the following error:
 
 ### Recommendation
 
-Add an out-of-bounds access check for `strategyIndex` in the `_removeStrategyFromStakerStrategyList` function.
+Add an out-of-bounds access check for the `strategyIndex` parameter.
 
-## [L-03] Missing array length check in the `queueWithdrawal` function
+## [L-03] Missing array length check
 
 ### Description
 
-The `queueWithdrawal` function in the `StrategyManager` contract does not validate the length of the `uint256[] strategyIndexes` input argument.
+The `queueWithdrawal` function in the `StrategyManager` contract does not validate the length of the `uint256[] strategyIndexes` parameter.
 
 [src/contracts/core/src/contracts/core/StrategyManager.sol#L329-L429](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L329-L429)
 
@@ -272,13 +272,13 @@ Currently, the function assumes that the length of `strategyIndexes` is equal to
 
 ### Recommendation
 
-Add a check to ensure the length of the uint256[] strategyIndexes argument is the same as the other input arrays.
+Add an array length check for the `uint256[] strategyIndexes` parameter.
 
 ## [N-01] Misleading comment for `sharesToUnderlying` function
 
 ### Description
 
-The following comment for the `sharesToUnderlying` function in the [`StrategyBase`] contract is misleading:
+The following comment for the `sharesToUnderlying` function in the `StrategyBase` contract is misleading:
 
 [src/contracts/strategies/StrategyBase.sol#L182](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L182)
 
@@ -296,7 +296,7 @@ Update the comment for `sharesToUnderlying` function to accurately reflect that 
 
 ## Description
 
-There is a [misleading comment](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) for the `Merkle` contract. The modified implementation uses `sha256` hash function but the comment does not reflect the changes.
+There is a misleading comment for the `Merkle` contract. The modified implementation uses `sha256` hash function but the comment does not reflect the changes.
 
 [src/contracts/libraries/Merkle.sol#L6-L19](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19)
 
@@ -333,7 +333,7 @@ Update the comment for the `Merkle` contract to accurately reflect the current i
 
 ### Description
 
-The NatSpec comment for the `depositBeaconChainETH` function contains a redundant and misleading comment for the `amount` parameter. The second occurrence of `amount` in the comment is misleading and may confuse developers.
+The comment for the `depositBeaconChainETH` function contains a redundant and misleading comment for the `amount` parameter. The second occurrence of `amount` in the comment may confuse developers.
 
 #### 1. `StrategyManager.sol`
 
@@ -365,8 +365,6 @@ The NatSpec comment for the `depositBeaconChainETH` function contains a redundan
      */
     function depositBeaconChainETH(address staker, uint256 amount) external;
 ```
-
-The second occurrence of `amount` is misleading and may confuse developers.
 
 ### Recommendation
 
