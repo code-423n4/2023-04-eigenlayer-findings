@@ -1,0 +1,3 @@
+In the function `depositIntoStrategyWithSignature` of `StrategyManager.sol` there is a check of `adress(0)` and `amount` but for that we have to loop throught 3 functions which will cost alot of gas so it is better use the check for `amount` and `adress(0)` at the start, instead of looping through all the contracts and reverting
+
+https://github.com/Layr-Labs/eigenlayer-contracts/blob/dbeb85bcd0476e06b8feebf07e33f8a53d54c029/src/contracts/core/StrategyManager.sol#L248
