@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "hasmama",
+  "risk": "3",
+  "title": "High gas consumption vulnerability due to high merkle tree heights",
+  "issueId": 332,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/332"
+}
