@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "QiuhaoLi",
+  "risk": "2",
+  "title": "Serivces can widely disable ETH restaking by tricking stakers reach MAX_STAKER_STRATEGY_LIST_LENGTH(32)",
+  "issueId": 352,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/352"
+}
