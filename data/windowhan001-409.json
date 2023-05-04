@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "windowhan001",
+  "risk": "3",
+  "title": "verifyWithdrawalCredentialsAndBalance does not verify that oracleBlockNumber is the latest block number.",
+  "issueId": 409,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/409"
+}
