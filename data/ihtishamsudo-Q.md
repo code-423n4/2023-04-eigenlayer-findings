@@ -64,8 +64,6 @@ event TotalSharesUpdated(uint256 totalShares);
 
 [StrategyBase.sol#L110](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/strategies/StrategyBase.sol#LL110C9-L110C42)
 
-# [L-02]
-
 ### Same Mitigation Steps as [L-01] in `withdraw()` at #L142
 
 ##### Reference
@@ -91,13 +89,11 @@ event TotalSharesUpdated(uint256 totalShares);
 ```
 ### Recommended Mitigation Steps
 
-`computePhase0BeaconBlockHeaderRoot()` Should be removed to reduce code & to not make a code's review difficult
+## `computePhase0BeaconBlockHeaderRoot()` Should be removed to reduce code & to not make a code's review difficult
 
 ##### Reference
 
 [BeaconChainProofs.sol#L130-138](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#LL130C4-L138C6)
-
-# [QA-02]
 
 ## `computePhase0BeaconStateRoot()` Is Never Used & Should Be Removed
 
@@ -105,15 +101,12 @@ event TotalSharesUpdated(uint256 totalShares);
 
 [BeaconChainProofs.sol#L140-148](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#LL140C5-L148C6) 
 
-# [QA-03]
-
 ## `computePhase0ValidatorRoot()` Is Never Used & Should Be Removed
 
 ##### Reference
 
 [BeaconChainProofs.sol#L150-158](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/BeaconChainProofs.sol#LL150C5-L159C1)
 
-# [QA-04]
 
 ## `computePhase0Eth1DataRoot()` Is Never Used & Should Be Removed
 
