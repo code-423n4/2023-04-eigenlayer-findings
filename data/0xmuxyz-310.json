@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xmuxyz",
+  "risk": "2",
+  "title": "Lack of validation to check whether or not the user's funds would be remained in the underlying protocol, which lead to that user's funds will be stuck unless the strategy will be added again by the StrategyWhitelister",
+  "issueId": 310,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/310"
+}
