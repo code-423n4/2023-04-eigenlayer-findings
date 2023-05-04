@@ -4,7 +4,7 @@
 | L  | Low risk | Potential risk |
 | NC |  Non-critical | Non risky findings |
 
-| Total Found Issues | 14 |
+| Total Found Issues | 15 |
 |:--:|:--:|
 
 ### Low
@@ -21,18 +21,19 @@
 ### Non-Critical 
 | Count | Title | Instances |
 |:--:|:-------|:--:|
-| [N-01] | Potential precision loss when withdrawing small amount of wei (less than 1e9 gwei) | 1 |
-| [N-02] | A minimum `_REQUIRED_BALANCE_WEI` that is restaked per validator can be set | 1 |
-| [N-03] | Lack of zero address checks in constructors | 4 |
-| [N-04] | Consider using delete instead of assigning default boolean value | 3 |
-| [N-05] | Missing events for important functions| 3 |
-| [N-06] | Unecessary explicit conversion of `uint256` | 5 |
-| [N-07] | Lack of zero value check for `StrategyManager.queueWithdrawal` | 1 |
-| [N-08] | Perform input validation first in `EigenPod.sol` constructor | 1 |
-| [N-09] | Consider using get prefix for getter functions | 9 |
-| [N-10] | Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol` | 1 |
+| [NC-01] | Potential precision loss when withdrawing small amount of wei (less than 1e9 gwei) | 1 |
+| [NC-02] | A minimum `_REQUIRED_BALANCE_WEI` that is restaked per validator can be set | 1 |
+| [NC-03] | Lack of zero address checks in constructors | 4 |
+| [NC-04] | Consider using delete instead of assigning default boolean value | 3 |
+| [NC-05] | Missing events for important functions| 3 |
+| [NC-06] | Unecessary explicit conversion of `uint256` | 5 |
+| [NC-07] | Lack of zero value check for `StrategyManager.queueWithdrawal` | 1 |
+| [NC-08] | Perform input validation first in `EigenPod.sol` constructor | 1 |
+| [NC-09] | Consider using get prefix for getter functions | 9 |
+| [NC-10] | Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol` | 1 |
+| [NC-11] | Use ternary operators to shorten if/else statements | 4 |
 
-| Total Non-Critical Issues | 10 |
+| Total Non-Critical Issues | 11 |
 |:--:|:--:|
 
 
@@ -363,3 +364,76 @@ bytes4 constant internal ERC1271_MAGICVALUE = 0x1626ba7e;
 ```
 
 Since there is already a dedicated contract for storing `StrategeManager` storage variables, we can simply store all storage variables in `StrategyManager.sol` in `StrategyManagerStorage.sol `
+
+### [NC-11] Use ternary operators to shorten if/else statements
+[StrategyBase.sol#L78](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L78)
+```solidity
+function deposit(IERC20 token, uint256 amount)
+        ...
+        uint256 priorTokenBalance = _tokenBalance() - amount;
+        if (priorTokenBalance == 0) {
+            newShares = amount;
+        } else {
+            newShares = (amount * totalShares) / priorTokenBalance;
+        }
+        ...
+```
+[StrategyBase.sol#L121](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L121)
+```solidity
+function withdraw(address depositor, IERC20 token, uint256 amountShares)
+    ...
+    if (priorTotalShares == amountShares) {
+        amountToSend = _tokenBalance();
+    } else {
+        amountToSend = (_tokenBalance() * amountShares) / priorTotalShares;
+    }
+    ...
+```
+[StrategyBase.sol#L172](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L172)
+```solidity
+function sharesToUnderlyingView(uint256 amountShares) public view virtual override returns (uint256) {
+    if (totalShares == 0) {
+        return amountShares;
+    } else {
+        return (_tokenBalance() * amountShares) / totalShares;
+    }
+}
+```
+[StrategyBase.sol#L196](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L196)
+```solidity
+function underlyingToSharesView(uint256 amountUnderlying) public view virtual returns (uint256) {
+    uint256 tokenBalance = _tokenBalance();
+    if (tokenBalance == 0 || totalShares == 0) {
+        return amountUnderlying;
+    } else {
+        return (amountUnderlying * totalShares) / tokenBalance;
+    }
+}
+```
+Use ternary operators to shorten if/else statements to improve readability and shorten SLOC. Can also potentially reduce deployment size and deployment cost at the expense of execution cost
+
+Recommendation:
+```solidity
+function deposit(IERC20 token, uint256 amount)
+        ...
+        uint256 priorTokenBalance = _tokenBalance() - amount;
+        newShares = priorTokenBalance == 0 ? amount : (amount * totalShares) / priorTokenBalance;
+        ...
+```
+```solidity
+function withdraw(address depositor, IERC20 token, uint256 amountShares)
+    ...
+    amountToSend = priorTotalShares == amountShares ? _tokenBalance() : (_tokenBalance() * amountShares) / priorTotalShares;
+    ...
+```
+```solidity
+function sharesToUnderlyingView(uint256 amountShares) public view virtual override returns (uint256) {
+    return totalShares == 0 ? amountShares : (_tokenBalance() * amountShares) / totalShares;
+}
+```
+```solidity
+function underlyingToSharesView(uint256 amountUnderlying) public view virtual returns (uint256) {
+    uint256 tokenBalance = _tokenBalance();
+    return (tokenBalance == 0 || totalShares == 0) ? amountUnderlying: (amountUnderlying * totalShares) / tokenBalance;
+}
+```
