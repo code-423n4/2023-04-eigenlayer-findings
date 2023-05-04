@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xepley",
+  "risk": "2",
+  "title": "`_deployPod()` is using hardcoded salt value which can cause issues",
+  "issueId": 422,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/422"
+}
