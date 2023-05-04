@@ -348,7 +348,15 @@ The comment for the `depositBeaconChainETH` function contains a redundant and mi
      * @dev Only callable by EigenPodManager.
      */
     function depositBeaconChainETH(address staker, uint256 amount)
-    ...
+        external
+        onlyEigenPodManager
+        onlyWhenNotPaused(PAUSED_DEPOSITS)
+        onlyNotFrozen(staker)
+        nonReentrant
+    {
+        // add shares for the enshrined beacon chain ETH strategy
+        _addShares(staker, beaconChainETHStrategy, amount);
+    }
 ```
 
 #### 2. `IStrategyManager.sol`
