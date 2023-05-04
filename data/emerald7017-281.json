@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "emerald7017",
+  "risk": "3",
+  "title": "Potential Reentrancy in DelayedWithdrawalRouter Contract.",
+  "issueId": 281,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/281"
+}
