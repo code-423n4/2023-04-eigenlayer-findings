@@ -300,7 +300,7 @@ The `sharesToUnderlying` function has a `view` modifier. Therefore, it does not 
 
 ### Recommendation
 
-Consider updating the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
+Update the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
 
 ## [N-02] Misleading comments for the `Merkle` contract
 
@@ -337,4 +337,51 @@ The above comments are incorrect as OpenZeppelin has defined [standard Merkle tr
 
 ### Recommendation
 
-Consider updating the comments in the `Merkle.sol` to accurately reflect the current implementation.
+Update the comments in the `Merkle.sol` to accurately reflect the current implementation.
+
+## [N-03] Redundant and misleading comments for the `amount` parameter of the `depositBeaconChainETH` function
+
+### Description
+
+The NatSpec comment for the `depositBeaconChainETH` function contains a redundant and misleading comment for the `amount` parameter. The second occurrence of `amount` in the comment is misleading and may cause confusion for developers.
+
+**1. `StrategyManager.sol`**
+
+[src/contracts/core/StrategyManager.sol#L157-L173](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L157-L173)
+
+```solidity
+    /**
+     * @notice Deposits `amount` of beaconchain ETH into this contract on behalf of `staker`
+     * @param staker is the entity that is restaking in eigenlayer,
+     * @param amount is the amount of beaconchain ETH being restaked,
+     * @param amount is the amount of token to be deposited in the strategy by the depositor
+     * @dev Only callable by EigenPodManager.
+     */
+    function depositBeaconChainETH(address staker, uint256 amount)
+    ...
+```
+
+**2. `IStrategyManager.sol`**
+
+[src/contracts/interfaces/IStrategyManager.sol#L48-L55](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/interfaces/IStrategyManager.sol#L48-L55)
+
+```solidity
+    /**
+     * @notice Deposits `amount` of beaconchain ETH into this contract on behalf of `staker`
+     * @param staker is the entity that is restaking in eigenlayer,
+     * @param amount is the amount of beaconchain ETH being restaked,
+     * @param amount is the amount of token to be deposited in the strategy by the depositor
+     * @dev Only callable by EigenPod for the staker.
+     */
+    function depositBeaconChainETH(address staker, uint256 amount) external;
+```
+
+The second occurrence of `amount` is misleading and may confuse developers.
+
+### Recommendation
+
+Remove the second occurrence of amount from the NatSpec comments in both `StrategyManager.sol` and `IStrategyManager.sol`.
+
+```diff
+-    * @param amount is the amount of token to be deposited in the strategy by the depositor
+```
