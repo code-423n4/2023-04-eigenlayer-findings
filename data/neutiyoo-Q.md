@@ -368,7 +368,7 @@ The comment for the `depositBeaconChainETH` function contains a redundant and mi
 
 ### Recommendation
 
-Remove the second occurrence of `amount` from the NatSpec comment in both `StrategyManager.sol` and `IStrategyManager.sol`.
+Remove the second occurrence of `amount` from the comment in both `StrategyManager.sol` and `IStrategyManager.sol`.
 
 ```diff
 -    * @param amount is the amount of token to be deposited in the strategy by the depositor
