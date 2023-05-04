@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "troublor",
+  "risk": "3",
+  "title": "Initialize function in DelayedWithdrawalRouter contract can be front-run",
+  "issueId": 257,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/257"
+}
