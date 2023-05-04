@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Kenshin",
+  "risk": "3",
+  "title": "Asset of undelegated staker can be permanently stuck in withdrawal queue",
+  "issueId": 305,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/305"
+}
