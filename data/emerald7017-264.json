@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "emerald7017",
+  "risk": "2",
+  "title": "Replay Attack Vulnerability in depositIntoStrategyWithSignature function.",
+  "issueId": 264,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/264"
+}
