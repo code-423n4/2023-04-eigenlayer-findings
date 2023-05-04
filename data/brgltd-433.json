@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "brgltd",
+  "risk": "2",
+  "title": "The values for `strategyIndexes` are not enforced",
+  "issueId": 433,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/433"
+}
