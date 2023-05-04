@@ -4,7 +4,7 @@
 
 There are missing zero address checks as the following:
 
-#### 1. The `initialize` function in the `DelayedWithdrawalRouter.sol`
+#### 1. The `initialize` function in the `DelayedWithdrawalRouter` contract
 
 Missing zero address check:
 
@@ -34,7 +34,7 @@ The `initialize` function invokes the `_transferOwnership` function, which is im
 
 It is important to note that the `_transferOwnership` function does not include a zero address check for the `newOwner` parameter.
 
-#### 2. The `initialize` function in the `EigenPodManager.sol`
+#### 2. The `initialize` function in the `EigenPodManager` contract
 
 Missing zero address check:
 
@@ -56,7 +56,7 @@ Missing zero address check:
     }
 ```
 
-#### 3. The `initialize` function in the `StrategyManager.sol`
+#### 3. The `initialize` function in the `StrategyManager` contract
 
 Missing zero address check:
 
@@ -78,7 +78,7 @@ Missing zero address check:
     }
 ```
 
-#### 4. The `initialize` function in the `StrategyBase.sol`
+#### 4. The `initialize` function in the `StrategyBase` contract
 
 Missing zero address check:
 
@@ -98,7 +98,7 @@ Missing zero address check:
     }
 ```
 
-#### 5. The constructor in the `StrategyManagerStorage.sol`
+#### 5. The constructor in the `StrategyManagerStorage` contract
 
 Missing zero address check:
 
@@ -116,7 +116,7 @@ Missing zero address check:
     }
 ```
 
-#### 6. The constructor in the `StrategyBase.sol`
+#### 6. The constructor in the `StrategyBase` contract
 
 Missing zero address check:
 
@@ -131,7 +131,7 @@ Missing zero address check:
     }
 ```
 
-#### 7. The constructor in the `EigenPodManager.sol`
+#### 7. The constructor in the `EigenPodManager` contract
 
 Missing zero address check:
 
@@ -152,7 +152,7 @@ Missing zero address check:
     }
 ```
 
-#### 8. The constructor in the `EigenPod.sol`
+#### 8. The constructor in the `EigenPod` contract
 
 Missing zero address check:
 
@@ -274,7 +274,7 @@ Currently, the function assumes that the length of `strategyIndexes` is equal to
 
 Add an array length check for the `uint256[] strategyIndexes` parameter.
 
-## [N-01] Misleading comment for `sharesToUnderlying` function
+## [N-01] Misleading comment for the `sharesToUnderlying` function
 
 ### Description
 
