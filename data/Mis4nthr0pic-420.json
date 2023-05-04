@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Mis4nthr0pic",
+  "risk": "3",
+  "title": "[H-02] Owner cannot freeze and thus cannot slash a queued withdraw that has the `delegatedAddress` being the `0` address.",
+  "issueId": 420,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/420"
+}
