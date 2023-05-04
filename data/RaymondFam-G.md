@@ -189,3 +189,7 @@ For example, the modifier instance below may be refactored as follows:
         _;
     }
 ```
+## Unneeded DelayedWithdrawalRouter.sol
+There is no economic benefit and/or safety concern to the protocol by implementing this contract logic since all ETH funds reaching this stage already come clean of any slashes or penalties needed.
+
+Consider [sending ETH](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L464-L466) directly from EigenPod.sol to cut down on unneeded function calls and contract deployment.
