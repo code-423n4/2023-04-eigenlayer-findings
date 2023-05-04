@@ -4,7 +4,7 @@
 | L  | Low risk | Potential risk |
 | NC |  Non-critical | Non risky findings |
 
-| Total Found Issues | 12 |
+| Total Found Issues | 14 |
 |:--:|:--:|
 
 ### Low
@@ -29,8 +29,10 @@
 | [N-06] | Unecessary explicit conversion of `uint256` | 5 |
 | [N-07] | Lack of zero value check for `StrategyManager.queueWithdrawal` | 1 |
 | [N-08] | Perform input validation first in `EigenPod.sol` constructor | 1 |
+| [N-09] | Consider using get prefix for getter functions | 9 |
+| [N-10] | Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol` | 1 |
 
-| Total Non-Critical Issues | 8 |
+| Total Non-Critical Issues | 10 |
 |:--:|:--:|
 
 
@@ -272,3 +274,92 @@ constructor(
     _disableInitializers();
 }
 ```
+
+### [NC-09] Consider using get prefix for getter functions
+[StrategyManager.sol#L871](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L871)
+[StrategyBase.sol#L172](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L172)
+[StrategyBase.sol#L196](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L196)
+[StrategyBase.sol#L219](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L219)
+[StrategyBase.sol#L235](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L235)
+[DelayedWithdrawalRouter.sol#L105](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L105)
+[DelayedWithdrawalRouter.sol#L110](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L110)
+[DelayedWithdrawalRouter.sol#L122](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L122)
+[DelayedWithdrawalRouter.sol#L127](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L127)
+```solidity
+function stakerStrategyListLength(address staker) external view returns (uint256) {
+    return stakerStrategyList[staker].length;
+}
+
+function sharesToUnderlyingView(uint256 amountShares) public view virtual override returns (uint256) {
+    if (totalShares == 0) {
+        return amountShares;
+    } else {
+        return (_tokenBalance() * amountShares) / totalShares;
+    }
+}
+
+
+function underlyingToSharesView(uint256 amountUnderlying) public view virtual returns (uint256) {
+    uint256 tokenBalance = _tokenBalance();
+    if (tokenBalance == 0 || totalShares == 0) {
+        return amountUnderlying;
+    } else {
+        return (amountUnderlying * totalShares) / tokenBalance;
+    }
+}
+
+
+function userUnderlyingView(address user) external view virtual returns (uint256) {
+    return sharesToUnderlyingView(shares(user));
+}
+
+
+function shares(address user) public view virtual returns (uint256) {
+    return strategyManager.stakerStrategyShares(user, IStrategy(address(this)));
+}
+
+
+function userWithdrawals(address user) external view returns (UserDelayedWithdrawals memory) {
+    return _userWithdrawals[user];
+}
+
+function claimableUserDelayedWithdrawals(address user) external view returns (DelayedWithdrawal[] memory) {
+    uint256 delayedWithdrawalsCompleted = _userWithdrawals[user].delayedWithdrawalsCompleted;
+    uint256 delayedWithdrawalsLength = _userWithdrawals[user].delayedWithdrawals.length;
+    uint256 claimableDelayedWithdrawalsLength = delayedWithdrawalsLength - delayedWithdrawalsCompleted;
+    DelayedWithdrawal[] memory claimableDelayedWithdrawals = new DelayedWithdrawal[](claimableDelayedWithdrawalsLength);
+    for (uint256 i = 0; i < claimableDelayedWithdrawalsLength; i++) {
+        claimableDelayedWithdrawals[i] = _userWithdrawals[user].delayedWithdrawals[delayedWithdrawalsCompleted + i];
+    }
+    return claimableDelayedWithdrawals;
+}
+
+
+function userDelayedWithdrawalByIndex(address user, uint256 index) external view returns (DelayedWithdrawal memory) {
+    return _userWithdrawals[user].delayedWithdrawals[index];
+}
+
+
+function userWithdrawalsLength(address user) external view returns (uint256) {
+    return _userWithdrawals[user].delayedWithdrawals.length;
+}
+```
+Consider using get prefix for getter (view/pure) functions to improve readability and prevent confusion
+
+### [NC-10] Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol`
+[StrategyManager.sol#L35-L45](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L35-L45)
+```solidity
+uint256 internal constant GWEI_TO_WEI = 1e9;
+
+// index for flag that pauses deposits when set
+uint8 internal constant PAUSED_DEPOSITS = 0;
+// index for flag that pauses withdrawals when set
+uint8 internal constant PAUSED_WITHDRAWALS = 1;
+
+uint256 immutable ORIGINAL_CHAIN_ID;
+
+// bytes4(keccak256("isValidSignature(bytes32,bytes)")
+bytes4 constant internal ERC1271_MAGICVALUE = 0x1626ba7e;
+```
+
+Since there is already a dedicated contract for storing `StorageManager` storage variables, we can simply store all storage variables in `StorageManager.sol` in `StorageManagerStorage.sol `
