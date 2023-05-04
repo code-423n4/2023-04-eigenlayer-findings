@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "windowhan001",
+  "risk": "3",
+  "title": "The length of proofs.slotProof is not checked in the verifyWithdrawalProofs function, allowing a malicious EigenPod Owner to be issued only shares via StrategyManager and withdraw all their money",
+  "issueId": 457,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/457"
+}
