@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "mau",
+  "risk": "2",
+  "title": "[M-1] Potential DoS attack due to unchecked array lengths in loop",
+  "issueId": 378,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/378"
+}
