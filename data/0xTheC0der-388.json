@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xTheC0der",
+  "risk": "3",
+  "title": "Slot and block number proofs not required for verification of withdrawal (multiple withdrawals possible)",
+  "issueId": 388,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/388"
+}
