@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "emerald7017",
+  "risk": "2",
+  "title": "Failure to validate recipient address in claimDelayedWithdrawals function",
+  "issueId": 282,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/282"
+}
