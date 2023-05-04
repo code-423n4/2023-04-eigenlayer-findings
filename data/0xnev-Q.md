@@ -233,7 +233,7 @@ function queueWithdrawal(
     nonReentrant
     returns (bytes32)
 ```
-Consider adding a check to not allow queueing withdrawals of `shares` in `StrategyManager.queueWithdrawal` of zero amount since it acheives nothing for restakers and operators. Also prevents restakers/operators from queueing unlimited number of withdrawals of 0 value, creating alot of noise.
+Consider adding a check to not allow queueing withdrawals of `shares` in `StrategyManager.queueWithdrawal` of zero amount since it acheives nothing for restakers and operators. Also prevents restakers/operators from queueing unlimited number of withdrawals of 0 value, creating alot of noise as it will still emit `WithdrawalQueued()` event.
 
 ### [NC-08] Perform input validation first in `EigenPod.sol` constructor
 [EigenPod.sol#L147](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L147)
@@ -346,7 +346,7 @@ function userWithdrawalsLength(address user) external view returns (uint256) {
 ```
 Consider using get prefix for getter (view/pure) functions to improve readability and prevent confusion
 
-### [NC-10] Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol`
+### [NC-10] Shift all constants in `StrategyManager.sol` to `StrategyManagerStorage.sol`
 [StrategyManager.sol#L35-L45](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L35-L45)
 ```solidity
 uint256 internal constant GWEI_TO_WEI = 1e9;
@@ -362,4 +362,4 @@ uint256 immutable ORIGINAL_CHAIN_ID;
 bytes4 constant internal ERC1271_MAGICVALUE = 0x1626ba7e;
 ```
 
-Since there is already a dedicated contract for storing `StorageManager` storage variables, we can simply store all storage variables in `StorageManager.sol` in `StorageManagerStorage.sol `
+Since there is already a dedicated contract for storing `StrategeManager` storage variables, we can simply store all storage variables in `StrategyManager.sol` in `StrategyManagerStorage.sol `
