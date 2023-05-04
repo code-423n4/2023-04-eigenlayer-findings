@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "MohammedRizwan",
+  "risk": "3",
+  "title": "anyone can call initialize() functions which can cause lost of funds and contract ownership",
+  "issueId": 337,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/337"
+}
