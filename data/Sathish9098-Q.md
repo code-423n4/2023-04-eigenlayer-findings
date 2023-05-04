@@ -12,10 +12,12 @@ Report contents changed:  # LOW FINDINGS
 | [L-8]| Function Calls in Loop Could Lead to Denial of Service  | 7 |
 | [L-9]| Project Upgrade and Stop Scenario should be  | - |
 | [L-10]|  Front running attacks by the onlyOwner | 1 |
-| [L-11]| Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern  | 1 |
+| [L-11]| Even with the onlyOwner or owner_only modifier, it is best practice to use the re-entrancy pattern| 1 |
 | [L-12]|  Unused Modifiers block  | 2 |
 | [L-13]| Vulnerable to cross-chain replay attacks due to static DOMAIN_SEPARATOR/domainSeparator | 3 |
 | [L-14]| Insufficient coverage | - |
+| [L-15]| Missing Contract-existence Checks Before Low-level Calls | 2 |
+
 
  # NON CRITICAL FINDINGS
 
@@ -456,6 +458,23 @@ Scoping Details
 - What is the overall line coverage percentage provided by your tests?:  95
 
 ```
+
+##
+
+## [L-15] Missing Contract-existence Checks Before Low-level Calls
+
+Low-level calls return success if there is no code present at the specified address.
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/libraries/Merkle.sol
+
+107:  if iszero(staticcall(sub(gas(), 2000), 2, 0x00, 0x40, computedHash, 0x20)) {revert(0, 0)}
+115:  if iszero(staticcall(sub(gas(), 2000), 2, 0x00, 0x40, computedHash, 0x20)) {revert(0, 0)
+
+```
+[Merkle.sol#L107](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/libraries/Merkle.sol#L107)
+
+
 
 
 
