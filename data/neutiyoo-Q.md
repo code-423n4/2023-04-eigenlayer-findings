@@ -6,7 +6,7 @@ Some constructors miss zero address checks as the following:
 
 **1. `StrategyManagerStorage.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IDelegationManager _delegation`
 - `IEigenPodManager _eigenPodManager`
@@ -24,7 +24,7 @@ Missing input validation:
 
 **2. `StrategyBase.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IStrategyManager _strategyManager`
 
@@ -39,7 +39,7 @@ Missing input validation:
 
 **3. `EigenPodManager.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IETHPOSDeposit _ethPOS`
 - `IBeacon _eigenPodBeacon`
@@ -60,7 +60,7 @@ Missing input validation:
 
 **4. `EigenPod.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IETHPOSDeposit _ethPOS`
 - `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
@@ -97,7 +97,7 @@ Some `initialize` functions miss zero address checks as the following:
 
 **1. `DelayedWithdrawalRouter.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `address initOwner`
 
@@ -111,7 +111,9 @@ Missing input validation:
     }
 ```
 
-The [`initialize`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53) function of the [`DelayedWithdrawalRouter`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol) does not validate the `address initOwner`. The code calls the [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L83-L87) function from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
+The `initialize` function invokes the `_transferOwnership` function, which is imported from the OpenZeppelin `OwnableUpgradeable.sol` file. The function is defined as follows:
+
+[OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L83-L87](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L83-L87)
 
 ```solidity
     function _transferOwnership(address newOwner) internal virtual {
@@ -121,11 +123,11 @@ The [`initialize`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/sr
     }
 ```
 
-Note that this function doesn't have a zero address check for the `address newOwner`.
+It is important to note that the `_transferOwnership` function does not include a zero address check for the `newOwner` parameter.
 
 **2. `EigenPodManager.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IBeaconChainOracle _beaconChainOracle`
 - `address initialOwner`
@@ -147,7 +149,7 @@ Missing input validation:
 
 **3. `StrategyManager.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `address initialOwner`
 - `address initialStrategyWhitelister`
@@ -169,7 +171,7 @@ Missing input validation:
 
 **4. `StrategyBase.sol`**
 
-Missing input validation:
+Missing zero address check:
 
 - `IERC20 _underlyingToken`
 
