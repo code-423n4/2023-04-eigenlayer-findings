@@ -183,3 +183,19 @@ According to the function NatSpec of `Merkle.merkleizeSha256()`, it requires the
     }
 ```
 With this refactoring, `merkleizeSha256()` will revert the transaction if the number of leaves is not a power of 2.
+
+## Modularity on import usages
+For cleaner Solidity code in conjunction with the rule of modularity and modular programming, use named imports with curly braces instead of adopting the global import approach.
+
+For example, the import instances below could be refactored conforming to the suggested standards as follows:
+
+[File: StrategyManager.sol#L11-L13](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L11-L13)
+
+```diff
+- import "../interfaces/IEigenPodManager.sol";
++ import {IEigenPodManager} from "../interfaces/IEigenPodManager.sol";
+- import "../permissions/Pausable.sol";
++ import {Pausable} from "../permissions/Pausable.sol";
+- import "./StrategyManagerStorage.sol";
++ import {StrategyManagerStorage} from "./StrategyManagerStorage.sol";
+```
