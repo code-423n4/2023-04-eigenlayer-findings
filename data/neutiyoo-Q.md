@@ -183,7 +183,7 @@ Missing zero address check:
 
 Add zero address checks.
 
-## [L-02] Missing out-of-bounds access check
+## [L-02] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
 
 ### Description
 
@@ -241,7 +241,7 @@ This modification will trigger the following error:
 
 Add an out-of-bounds access check for the `strategyIndex` parameter.
 
-## [L-03] Missing array length check
+## [L-03] Missing array length check in the `queueWithdrawal` function
 
 ### Description
 
