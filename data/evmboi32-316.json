@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "evmboi32",
+  "risk": "3",
+  "title": "User can cheat and get slashed on beacon and still withdraw all the shares without getting slashed on EigenLayer",
+  "issueId": 316,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/316"
+}
