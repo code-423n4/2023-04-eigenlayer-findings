@@ -1,4 +1,197 @@
-## [L-01] Missing out-of-bounds access check in `_removeStrategyFromStakerStrategyList` function
+## [L-01] Missing zero address checks in some constructors
+
+### Description
+
+Some constructors miss zero address checks as the following:
+
+**1. `StrategyManagerStorage.sol`**
+
+Missing input validation:
+
+- `IDelegationManager _delegation`
+- `IEigenPodManager _eigenPodManager`
+- `ISlasher _slasher`
+
+[src/contracts/core/StrategyManagerStorage.sol#L72-L76](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManagerStorage.sol#L72-L76)
+
+```solidity
+    constructor(IDelegationManager _delegation, IEigenPodManager _eigenPodManager, ISlasher _slasher) {
+        delegation = _delegation;
+        eigenPodManager = _eigenPodManager;
+        slasher = _slasher;
+    }
+```
+
+**2. `StrategyBase.sol`**
+
+Missing input validation:
+
+- `IStrategyManager _strategyManager`
+
+[src/contracts/strategies/StrategyBase.sol#L46-L49](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L46-L49)
+
+```solidity
+    constructor(IStrategyManager _strategyManager) {
+        strategyManager = _strategyManager;
+        _disableInitializers();
+    }
+```
+
+**3. `EigenPodManager.sol`**
+
+Missing input validation:
+
+- `IETHPOSDeposit _ethPOS`
+- `IBeacon _eigenPodBeacon`
+- `IStrategyManager _strategyManager`
+- `ISlasher _slasher`
+
+[src/contracts/pods/EigenPodManager.sol#L76-L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82)
+
+```solidity
+    constructor(IETHPOSDeposit _ethPOS, IBeacon _eigenPodBeacon, IStrategyManager _strategyManager, ISlasher _slasher) {
+        ethPOS = _ethPOS;
+        eigenPodBeacon = _eigenPodBeacon;
+        strategyManager = _strategyManager;
+        slasher = _slasher;
+        _disableInitializers();
+    }
+```
+
+**4. `EigenPod.sol`**
+
+Missing input validation:
+
+- `IETHPOSDeposit _ethPOS`
+- `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
+- `IEigenPodManager _eigenPodManager`
+
+[src/contracts/pods/EigenPod.sol#L136-L149](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149)
+
+```solidity
+    constructor(
+        IETHPOSDeposit _ethPOS,
+        IDelayedWithdrawalRouter _delayedWithdrawalRouter,
+        IEigenPodManager _eigenPodManager,
+        uint256 _REQUIRED_BALANCE_WEI
+    ) {
+        ethPOS = _ethPOS;
+        delayedWithdrawalRouter = _delayedWithdrawalRouter;
+        eigenPodManager = _eigenPodManager;
+        REQUIRED_BALANCE_WEI = _REQUIRED_BALANCE_WEI;
+        REQUIRED_BALANCE_GWEI = uint64(_REQUIRED_BALANCE_WEI / GWEI_TO_WEI);
+        require(_REQUIRED_BALANCE_WEI % GWEI_TO_WEI == 0, "EigenPod.contructor: _REQUIRED_BALANCE_WEI is not a whole number of gwei");
+        _disableInitializers();
+    }
+```
+
+### Recommendation
+
+Consider checking the zero address for the constructor arguments.
+
+## [L-02] Missing zero address checks in some `initialize` functions
+
+### Description
+
+Some `initialize` functions miss zero address checks as the following:
+
+**1. `DelayedWithdrawalRouter.sol`**
+
+Missing input validation:
+
+- `address initOwner`
+
+[src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53)
+
+```solidity
+    function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
+        _transferOwnership(initOwner);
+        _initializePauser(_pauserRegistry, initPausedStatus);
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
+```
+
+The [`initialize`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53) function of the [`DelayedWithdrawalRouter`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol) does not validate the `address initOwner`. The code calls the [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L83-L87) function from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
+
+```solidity
+    function _transferOwnership(address newOwner) internal virtual {
+        address oldOwner = _owner;
+        _owner = newOwner;
+        emit OwnershipTransferred(oldOwner, newOwner);
+    }
+```
+
+Note that this function doesn't have a zero address check for the `address newOwner`.
+
+**2. `EigenPodManager.sol`**
+
+Missing input validation:
+
+- `IBeaconChainOracle _beaconChainOracle`
+- `address initialOwner`
+
+[src/contracts/pods/EigenPodManager.sol#L84-L93](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L84-L93)
+
+```solidity
+    function initialize(
+        IBeaconChainOracle _beaconChainOracle,
+        address initialOwner,
+        IPauserRegistry _pauserRegistry,
+        uint256 _initPausedStatus
+    ) external initializer {
+        _updateBeaconChainOracle(_beaconChainOracle);
+        _transferOwnership(initialOwner);
+        _initializePauser(_pauserRegistry, _initPausedStatus);
+    }
+```
+
+**3. `StrategyManager.sol`**
+
+Missing input validation:
+
+- `address initialOwner`
+- `address initialStrategyWhitelister`
+
+[src/contracts/core/StrategyManager.sol#L146-L155](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L146-L155)
+
+```solidity
+    function initialize(address initialOwner, address initialStrategyWhitelister, IPauserRegistry _pauserRegistry, uint256 initialPausedStatus, uint256 _withdrawalDelayBlocks)
+        external
+        initializer
+    {
+        DOMAIN_SEPARATOR = keccak256(abi.encode(DOMAIN_TYPEHASH, keccak256(bytes("EigenLayer")), ORIGINAL_CHAIN_ID, address(this)));
+        _initializePauser(_pauserRegistry, initialPausedStatus);
+        _transferOwnership(initialOwner);
+        _setStrategyWhitelister(initialStrategyWhitelister);
+        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
+    }
+```
+
+**4. `StrategyBase.sol`**
+
+Missing input validation:
+
+- `IERC20 _underlyingToken`
+
+[src/contracts/strategies/StrategyBase.sol#L51-L59](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L51-L59)
+
+```solidity
+    function initialize(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) public virtual initializer {
+        _initializeStrategyBase(_underlyingToken, _pauserRegistry);
+    }
+
+    /// @notice Sets the `underlyingToken` and `pauserRegistry` for the strategy.
+    function _initializeStrategyBase(IERC20 _underlyingToken, IPauserRegistry _pauserRegistry) internal onlyInitializing {
+        underlyingToken = _underlyingToken;
+        _initializePauser(_pauserRegistry, UNPAUSE_ALL);
+    }
+```
+
+### Recommendation
+
+Consider checking the zero address for the `initialize` function arguments.
+
+## [L-03] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
 
 ### Description
 
@@ -56,103 +249,7 @@ This modification will trigger the following error:
 
 Consider checking out-of-bounds access.
 
-## [L-02] Missing zero address check for `address initOwner` in `initialize` function of `DelayedWithdrawalRouter` contract
-
-### Description
-
-The [`initialize`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53) function of the [`DelayedWithdrawalRouter`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol) contract does not have a zero address check for the `address initOwner`.
-
-[src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/DelayedWithdrawalRouter.sol#L49-L53)
-
-```solidity
-    function initialize(address initOwner, IPauserRegistry _pauserRegistry, uint256 initPausedStatus, uint256 _withdrawalDelayBlocks) external initializer {
-        _transferOwnership(initOwner);
-        _initializePauser(_pauserRegistry, initPausedStatus);
-        _setWithdrawalDelayBlocks(_withdrawalDelayBlocks);
-    }
-```
-
-The code calls the [`_transferOwnership`](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable/blob/6b9807b0639e1dd75e07fa062e9432eb3f35dd8c/contracts/access/OwnableUpgradeable.sol#L79-L87) function from the `OwnableUpgradeable.sol` file in the OpenZeppelin library.
-
-```solidity
-    /**
-     * @dev Transfers ownership of the contract to a new account (`newOwner`).
-     * Internal function without access restriction.
-     */
-    function _transferOwnership(address newOwner) internal virtual {
-        address oldOwner = _owner;
-        _owner = newOwner;
-        emit OwnershipTransferred(oldOwner, newOwner);
-    }
-```
-
-Note that this function doesn't have a zero address check for the `address newOwner`.
-
-### Recommendation
-
-Consider checking the zero value for the `address initOwner` argument.
-
-## [L-03] Missing zero address check in the constructor of `EigenPodManager` contract
-
-### Description
-
-The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82) of the [`EigenPodManager`](httpshttps://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol) contract has no zero value check for the following arguments:
-
-- `IETHPOSDeposit _ethPOS`
-- `IBeacon _eigenPodBeacon`
-- `IStrategyManager _strategyManager`
-- `ISlasher _slasher`
-
-[src/contracts/pods/EigenPodManager.sol#L76-L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82)
-
-```solidity
-    constructor(IETHPOSDeposit _ethPOS, IBeacon _eigenPodBeacon, IStrategyManager _strategyManager, ISlasher _slasher) {
-        ethPOS = _ethPOS;
-        eigenPodBeacon = _eigenPodBeacon;
-        strategyManager = _strategyManager;
-        slasher = _slasher;
-        _disableInitializers();
-    }
-```
-
-### Recommendation
-
-Consider checking the zero address for the four constructor arguments.
-
-## [L-04] Missing zero address check in the constructor of `EigenPod` contract
-
-### Description
-
-The [constructor](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149) of the [`EigenPod`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol) contract has no zero address check for the following arguments:
-
-- `IETHPOSDeposit _ethPOS`
-- `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
-- `IEigenPodManager _eigenPodManager`
-
-[src/contracts/pods/EigenPod.sol#L136-L149](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149)
-
-```solidity
-    constructor(
-        IETHPOSDeposit _ethPOS,
-        IDelayedWithdrawalRouter _delayedWithdrawalRouter,
-        IEigenPodManager _eigenPodManager,
-        uint256 _REQUIRED_BALANCE_WEI
-    ) {
-        ethPOS = _ethPOS;
-        delayedWithdrawalRouter = _delayedWithdrawalRouter;
-        eigenPodManager = _eigenPodManager;
-        REQUIRED_BALANCE_WEI = _REQUIRED_BALANCE_WEI;
-        REQUIRED_BALANCE_GWEI = uint64(_REQUIRED_BALANCE_WEI / GWEI_TO_WEI);
-        require(_REQUIRED_BALANCE_WEI % GWEI_TO_WEI == 0, "EigenPod.contructor: _REQUIRED_BALANCE_WEI is not a whole number of gwei");
-        _disableInitializers();
-    }
-```
-
-### Recommendation
-
-Consider checking the zero address for the three constructor arguments.
-
-## [L-05] Missing zero value check in `deposit` function
+## [L-04] Missing zero value check in the `deposit` function
 
 ### Description
 
@@ -176,7 +273,7 @@ The [`deposit`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/c
 
 Consider checking the zero value for the `uint256 amount` argument.
 
-## [L-06] Missing array length check in `queueWithdrawal` function
+## [L-05] Missing array length check in the `queueWithdrawal` function
 
 ### Description
 
@@ -224,7 +321,7 @@ The `sharesToUnderlying` function has a `view` modifier. Therefore, it does not 
 
 Consider updating the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
 
-## [N-02] Misleading comments for `Merkle` contract
+## [N-02] Misleading comments for the `Merkle` contract
 
 ## Description
 
@@ -259,4 +356,4 @@ The above comments are incorrect as OpenZeppelin has defined [standard Merkle tr
 
 ### Recommendation
 
-Consider updating the comments in `Merkle.sol` to accurately reflect the current implementation.
+Consider updating the comments in the `Merkle.sol` to accurately reflect the current implementation.
