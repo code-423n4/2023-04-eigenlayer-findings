@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Neon2835",
+  "risk": "2",
+  "title": "Setting the `underlyingToken` to a token with low decimal precision and high value may lose too much value or reduce the willingness of users to participate, because the value of MIN_NONZERO_TOTAL_SHARES is fixed at 1e9",
+  "issueId": 361,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/361"
+}
