@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "QiuhaoLi",
+  "risk": "2",
+  "title": "Attacker can block withdrawBeforeRestaking() by calling verifyWithdrawalCredentialsAndBalance() before the podOwner/staker",
+  "issueId": 354,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/354"
+}
