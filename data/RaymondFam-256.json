@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "RaymondFam",
+  "risk": "2",
+  "title": "StrategyManager.slashShares() and EigenPod._processPartialWithdrawal() could clash into each other in _sendETH()",
+  "issueId": 256,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/256"
+}
