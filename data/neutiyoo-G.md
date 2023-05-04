@@ -6,9 +6,9 @@ Although the current implementation of the [`merkleizeSha256`](https://github.co
 
 #### 1. In-place Computation
 
-The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. Note that this optimization requires that the `leaves` array not be used again after it is modified.
+The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs.
 
-This optimization is valid based on the current implementation because the `leaves` array is not used again after it is modified.
+Note that this optimization requires that the `leaves` array not be used again after it is modified. Based on the current implementation, this optimization is safe because the `leaves` array is not used again after it is modified.
 
 #### 2. Assembly
 
@@ -152,29 +152,42 @@ contract MerkleTest is Test {
 
 Consider optimizing `merkleizeSha256` by using in-place computation, assembly, and unchecked arithmetic.
 
-## [G-02] Use unchecked arithmetic in `processInclusionProofSha256` and `processInclusionProofKeccak` functions
+## [G-02] Use unchecked arithmetic in `processInclusionProofKeccak` and `processInclusionProofSha256` functions
 
 ### Description
 
-The [`processInclusionProofSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L99-L121) and [`processInclusionProofKeccak`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L48-L70) functions in [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop.
+The `processInclusionProofKeccak` and `processInclusionProofSha256` functions in `Merkle` contract include unnecessary arithmetic checks for incrementing `uint256 i` in a for-loop. By using unchecked arithmetic, the gas cost of executing these functions can be reduced.
 
-[src/contracts/libraries/Merkle.sol#L50](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L50)
-[src/contracts/libraries/Merkle.sol#L101](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L101)
+#### 1. `processInclusionProofKeccak`
+
+[src/contracts/libraries/Merkle.sol#L48-L50](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L48-L50)
 
 ```solidity
-for (uint256 i = 32; i <= proof.length; i+=32) {
+    function processInclusionProofKeccak(bytes memory proof, bytes32 leaf, uint256 index) internal pure returns (bytes32) {
+        bytes32 computedHash = leaf;
+        for (uint256 i = 32; i <= proof.length; i+=32) {
+    ...
 ```
 
-By using unchecked arithmetic, the gas cost of executing these functions can be reduced.
+#### 2. `processInclusionProofSha256`
+
+[src/contracts/libraries/Merkle.sol#L99-L101](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L99-L101)
+
+```solidity
+    function processInclusionProofSha256(bytes memory proof, bytes32 leaf, uint256 index) internal view returns (bytes32) {
+        bytes32[1] memory computedHash = [leaf];
+        for (uint256 i = 32; i <= proof.length; i+=32) {
+    ...
+```
+
+Based on the current implementation, this optimization is safe because overflow is not possible as the length of `proof` is validated before the function call.
+
+### Recommendation
+
+Consider using unchecked arithmetic for `uint256 i`.
 
 ```solidity
 unchecked {
     i += 32;
 }
 ```
-
-This optimization is safe because based on the current implementation, overflow is not possible as the length of proof is validated before the function call.
-
-### Recommendation
-
-Consider using unchecked arithmetic for `uint256 i`.
