@@ -1238,24 +1238,3 @@ So we can avoid 1 Gsset (20000 gas)
 
 
 
-
-[G‑01]	Multiple address/ID mappings can be combined into a single mapping of an address/ID to a struct, where appropriate	1	-
-[G‑02]	State variables should be cached in stack variables rather than re-reading them from storage	15	1455
-[G‑03]	Multiple accesses of a mapping/array should use a local variable cache	11	462
-[G‑04]	<x> += <y> costs more gas than <x> = <x> + <y> for state variables	5	565
-[G‑05]	internal functions only called once can be inlined to save gas	4	80
-[G‑06]	Add unchecked {} for subtractions where the operands cannot underflow because of a previous require() or if-statement	5	425
-[G‑07]	<array>.length should not be looked up in every loop of a for-loop	4	12
-[G‑08]	++i/i++ should be unchecked{++i}/unchecked{i++} when it is not possible for them to overflow, as is the case when used in for- and while-loops	8	480
-[G‑09]	require()/revert() strings longer than 32 bytes cost extra gas	86	-
-[G‑10]	Optimize names to save gas	19	418
-[G‑11]	Using bools for storage incurs overhead	4	68400
-[G‑12]	++i costs less gas than i++, especially when it's used in for-loops (--i/i-- too)	4	20
-[G‑13]	Splitting require() statements that use && saves gas	1	3
-[G‑14]	Usage of uints/ints smaller than 32 bytes (256 bits) incurs overhead	4	-
-[G‑15]	Using private rather than public for constants, saves gas	6	-
-[G‑16]	Division by two should use bit shifting	2	40
-[G‑17]	require() or revert() statements that check input arguments should be at the top of the function 1	-
-[G‑18]	Use custom errors rather than revert()/require() strings to save gas	88	-
-[G‑19]	Functions guaranteed to revert when called by normal users can be marked payable	36	756
-[G‑20]	Constructors can be marked payable	7	147
