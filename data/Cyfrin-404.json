@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Cyfrin",
+  "risk": "3",
+  "title": "Queued withdrawals are not treated correctly when a slash occurs, leading to loss of user funds",
+  "issueId": 404,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/404"
+}
