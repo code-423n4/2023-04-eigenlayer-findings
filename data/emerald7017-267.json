@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "emerald7017",
+  "risk": "3",
+  "title": "`slashShares` function does not check the status of the address before slashing the shares.",
+  "issueId": 267,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/267"
+}
