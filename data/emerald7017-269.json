@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "emerald7017",
+  "risk": "2",
+  "title": "Integer overflow vulnerability in the function slashShares.",
+  "issueId": 269,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/269"
+}
