@@ -1,101 +1,10 @@
-## [L-01] Missing zero address checks in some constructors
+## [L-01] Missing zero address check
 
 ### Description
 
-Some constructors miss zero address checks as the following:
+There are missing zero address checks as the following:
 
-**1. `StrategyManagerStorage.sol`**
-
-Missing zero address check:
-
-- `IDelegationManager _delegation`
-- `IEigenPodManager _eigenPodManager`
-- `ISlasher _slasher`
-
-[src/contracts/core/StrategyManagerStorage.sol#L72-L76](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManagerStorage.sol#L72-L76)
-
-```solidity
-    constructor(IDelegationManager _delegation, IEigenPodManager _eigenPodManager, ISlasher _slasher) {
-        delegation = _delegation;
-        eigenPodManager = _eigenPodManager;
-        slasher = _slasher;
-    }
-```
-
-**2. `StrategyBase.sol`**
-
-Missing zero address check:
-
-- `IStrategyManager _strategyManager`
-
-[src/contracts/strategies/StrategyBase.sol#L46-L49](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L46-L49)
-
-```solidity
-    constructor(IStrategyManager _strategyManager) {
-        strategyManager = _strategyManager;
-        _disableInitializers();
-    }
-```
-
-**3. `EigenPodManager.sol`**
-
-Missing zero address check:
-
-- `IETHPOSDeposit _ethPOS`
-- `IBeacon _eigenPodBeacon`
-- `IStrategyManager _strategyManager`
-- `ISlasher _slasher`
-
-[src/contracts/pods/EigenPodManager.sol#L76-L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82)
-
-```solidity
-    constructor(IETHPOSDeposit _ethPOS, IBeacon _eigenPodBeacon, IStrategyManager _strategyManager, ISlasher _slasher) {
-        ethPOS = _ethPOS;
-        eigenPodBeacon = _eigenPodBeacon;
-        strategyManager = _strategyManager;
-        slasher = _slasher;
-        _disableInitializers();
-    }
-```
-
-**4. `EigenPod.sol`**
-
-Missing zero address check:
-
-- `IETHPOSDeposit _ethPOS`
-- `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
-- `IEigenPodManager _eigenPodManager`
-
-[src/contracts/pods/EigenPod.sol#L136-L149](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149)
-
-```solidity
-    constructor(
-        IETHPOSDeposit _ethPOS,
-        IDelayedWithdrawalRouter _delayedWithdrawalRouter,
-        IEigenPodManager _eigenPodManager,
-        uint256 _REQUIRED_BALANCE_WEI
-    ) {
-        ethPOS = _ethPOS;
-        delayedWithdrawalRouter = _delayedWithdrawalRouter;
-        eigenPodManager = _eigenPodManager;
-        REQUIRED_BALANCE_WEI = _REQUIRED_BALANCE_WEI;
-        REQUIRED_BALANCE_GWEI = uint64(_REQUIRED_BALANCE_WEI / GWEI_TO_WEI);
-        require(_REQUIRED_BALANCE_WEI % GWEI_TO_WEI == 0, "EigenPod.contructor: _REQUIRED_BALANCE_WEI is not a whole number of gwei");
-        _disableInitializers();
-    }
-```
-
-### Recommendation
-
-Add zero address checks for the constructor arguments.
-
-## [L-02] Missing zero address checks in some `initialize` functions
-
-### Description
-
-Some `initialize` functions miss zero address checks as the following:
-
-**1. `DelayedWithdrawalRouter.sol`**
+#### 1. The `initialize` function in the `DelayedWithdrawalRouter.sol`
 
 Missing zero address check:
 
@@ -125,7 +34,7 @@ The `initialize` function invokes the `_transferOwnership` function, which is im
 
 It is important to note that the `_transferOwnership` function does not include a zero address check for the `newOwner` parameter.
 
-**2. `EigenPodManager.sol`**
+#### 2. The `initialize` function in the `EigenPodManager.sol`
 
 Missing zero address check:
 
@@ -147,7 +56,7 @@ Missing zero address check:
     }
 ```
 
-**3. `StrategyManager.sol`**
+#### 3. The `initialize` function in the `StrategyManager.sol`
 
 Missing zero address check:
 
@@ -169,7 +78,7 @@ Missing zero address check:
     }
 ```
 
-**4. `StrategyBase.sol`**
+#### 4. The `initialize` function in the `StrategyBase.sol`
 
 Missing zero address check:
 
@@ -189,11 +98,92 @@ Missing zero address check:
     }
 ```
 
+#### 5. The constructor in the `StrategyManagerStorage.sol`
+
+Missing zero address check:
+
+- `IDelegationManager _delegation`
+- `IEigenPodManager _eigenPodManager`
+- `ISlasher _slasher`
+
+[src/contracts/core/StrategyManagerStorage.sol#L72-L76](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManagerStorage.sol#L72-L76)
+
+```solidity
+    constructor(IDelegationManager _delegation, IEigenPodManager _eigenPodManager, ISlasher _slasher) {
+        delegation = _delegation;
+        eigenPodManager = _eigenPodManager;
+        slasher = _slasher;
+    }
+```
+
+#### 6. The constructor in the `StrategyBase.sol`
+
+Missing zero address check:
+
+- `IStrategyManager _strategyManager`
+
+[src/contracts/strategies/StrategyBase.sol#L46-L49](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L46-L49)
+
+```solidity
+    constructor(IStrategyManager _strategyManager) {
+        strategyManager = _strategyManager;
+        _disableInitializers();
+    }
+```
+
+#### 7. The constructor in the `EigenPodManager.sol`
+
+Missing zero address check:
+
+- `IETHPOSDeposit _ethPOS`
+- `IBeacon _eigenPodBeacon`
+- `IStrategyManager _strategyManager`
+- `ISlasher _slasher`
+
+[src/contracts/pods/EigenPodManager.sol#L76-L82](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPodManager.sol#L76-L82)
+
+```solidity
+    constructor(IETHPOSDeposit _ethPOS, IBeacon _eigenPodBeacon, IStrategyManager _strategyManager, ISlasher _slasher) {
+        ethPOS = _ethPOS;
+        eigenPodBeacon = _eigenPodBeacon;
+        strategyManager = _strategyManager;
+        slasher = _slasher;
+        _disableInitializers();
+    }
+```
+
+#### 8. The constructor in the `EigenPod.sol`
+
+Missing zero address check:
+
+- `IETHPOSDeposit _ethPOS`
+- `IDelayedWithdrawalRouter _delayedWithdrawalRouter`
+- `IEigenPodManager _eigenPodManager`
+
+[src/contracts/pods/EigenPod.sol#L136-L149](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/pods/EigenPod.sol#L136-L149)
+
+```solidity
+    constructor(
+        IETHPOSDeposit _ethPOS,
+        IDelayedWithdrawalRouter _delayedWithdrawalRouter,
+        IEigenPodManager _eigenPodManager,
+        uint256 _REQUIRED_BALANCE_WEI
+    ) {
+        ethPOS = _ethPOS;
+        delayedWithdrawalRouter = _delayedWithdrawalRouter;
+        eigenPodManager = _eigenPodManager;
+        REQUIRED_BALANCE_WEI = _REQUIRED_BALANCE_WEI;
+        REQUIRED_BALANCE_GWEI = uint64(_REQUIRED_BALANCE_WEI / GWEI_TO_WEI);
+        require(_REQUIRED_BALANCE_WEI % GWEI_TO_WEI == 0, "EigenPod.contructor: _REQUIRED_BALANCE_WEI is not a whole number of gwei");
+        _disableInitializers();
+    }
+```
+
 ### Recommendation
 
-Add zero address checks for the `initialize` function arguments.
+Add zero address checks.
 
-## [L-03] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
+## [L-02] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
 
 ### Description
 
@@ -251,7 +241,7 @@ This modification will trigger the following error:
 
 Add an out-of-bounds access check for `strategyIndex` in the `_removeStrategyFromStakerStrategyList` function.
 
-## [L-04] Missing array length check in the `queueWithdrawal` function
+## [L-03] Missing array length check in the `queueWithdrawal` function
 
 ### Description
 
@@ -302,11 +292,11 @@ The `sharesToUnderlying` function has a `view` modifier. Therefore, it does not 
 
 Update the comment for `sharesToUnderlying` function to accurately reflect that it does not modify the state.
 
-## [N-02] Misleading comments for the `Merkle` contract
+## [N-02] Misleading comment for the `Merkle` contract
 
 ## Description
 
-There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) in the `Merkle` contract, which is adapted from OpenZeppelin Contracts. The modified implementation uses `sha256` hash function but the comments do not reflect the changes.
+There is a [misleading comment](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19) for the `Merkle` contract. The modified implementation uses `sha256` hash function but the comment does not reflect the changes.
 
 [src/contracts/libraries/Merkle.sol#L6-L19](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L6-L19)
 
@@ -327,7 +317,7 @@ There are [misleading comments](https://github.com/code-423n4/2023-04-eigenlayer
  */
 ```
 
-The above comments are incorrect as OpenZeppelin has defined [standard Merkle trees](https://github.com/OpenZeppelin/merkle-tree/blob/7dbf9a11cd69a0cfabf9cca4dbae37d14d30e1a6/README.md#standard-merkle-trees) with the following characteristics:
+The above comment is incorrect as OpenZeppelin has defined [standard Merkle trees](https://github.com/OpenZeppelin/merkle-tree/blob/7dbf9a11cd69a0cfabf9cca4dbae37d14d30e1a6/README.md#standard-merkle-trees) with the following characteristics:
 
 - The tree is shaped as a [complete binary tree](https://xlinux.nist.gov/dads/HTML/completeBinaryTree.html).
 - The leaves are sorted.
@@ -337,15 +327,15 @@ The above comments are incorrect as OpenZeppelin has defined [standard Merkle tr
 
 ### Recommendation
 
-Update the comments in the `Merkle.sol` to accurately reflect the current implementation.
+Update the comment for the `Merkle` contract to accurately reflect the current implementation.
 
-## [N-03] Redundant and misleading comments for the `amount` parameter of the `depositBeaconChainETH` function
+## [N-03] Redundant and misleading comment for the `amount` parameter of the `depositBeaconChainETH` function
 
 ### Description
 
-The NatSpec comment for the `depositBeaconChainETH` function contains a redundant and misleading comment for the `amount` parameter. The second occurrence of `amount` in the comment is misleading and may cause confusion for developers.
+The NatSpec comment for the `depositBeaconChainETH` function contains a redundant and misleading comment for the `amount` parameter. The second occurrence of `amount` in the comment is misleading and may confuse developers.
 
-**1. `StrategyManager.sol`**
+#### 1. `StrategyManager.sol`
 
 [src/contracts/core/StrategyManager.sol#L157-L173](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/core/StrategyManager.sol#L157-L173)
 
@@ -361,7 +351,7 @@ The NatSpec comment for the `depositBeaconChainETH` function contains a redundan
     ...
 ```
 
-**2. `IStrategyManager.sol`**
+#### 2. `IStrategyManager.sol`
 
 [src/contracts/interfaces/IStrategyManager.sol#L48-L55](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/interfaces/IStrategyManager.sol#L48-L55)
 
@@ -380,7 +370,7 @@ The second occurrence of `amount` is misleading and may confuse developers.
 
 ### Recommendation
 
-Remove the second occurrence of `amount` from the NatSpec comments in both `StrategyManager.sol` and `IStrategyManager.sol`.
+Remove the second occurrence of `amount` from the NatSpec comment in both `StrategyManager.sol` and `IStrategyManager.sol`.
 
 ```diff
 -    * @param amount is the amount of token to be deposited in the strategy by the depositor
