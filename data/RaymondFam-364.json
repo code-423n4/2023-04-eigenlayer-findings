@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "RaymondFam",
+  "risk": "2",
+  "title": "Missing lower boundary check on queueWithdrawal() could disrupt/deny slashQueuedWithdrawal()",
+  "issueId": 364,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/364"
+}
