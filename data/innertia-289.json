@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "innertia",
+  "risk": "2",
+  "title": "Using a vulnerable version of ECDSA",
+  "issueId": 289,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/289"
+}
