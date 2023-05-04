@@ -8,15 +8,15 @@
 | [G-2] | Using storage instead of memory for structs/arrays saves gas  | 11 | 23000 |
 | [G-3] | For events use 3 indexed rule to save gas  | 18 | - |
 | [G-4] | Lack of input value checks cause a redeployment if any human/accidental errors  | 3 |- | 
-| [G-5] | Use nested if and, avoid multiple check combinations  | 2 | - |
-| [G-6] | Unnecessary look up in if condition | 3 | - |
+| [G-5] | Use nested if and, avoid multiple check combinations  | 2 | 18 |
+| [G-6] | Unnecessary look up in if condition | 3 | 27 |
 | [G-7] | Functions should be used instead of modifiers to save gas  | 7 | - |
 | [G-8] | Sort Solidity operations using short-circuit mode  | 3 | - |
 | [G-9] | Use assembly to check for address(0) | 12 | 72 |
 | [G-10] | Shorthand way to write if / else statement can reduce the deployment cost  | 7 | - |
-| [G-11] | Less gas consuming condition checks should be on top  | 4 | - |
+| [G-11] | require() or revert() statements that check input arguments should be at the top of the function|4| - |
 | [G-12] | internal functions not called by the contract should be removed to save deployment gas  | 9 | - |
-| [G-13] | Modifiers or private functions only called once can be inlined to save gas | 6 | - |
+| [G-13] | Modifiers or private functions only called once can be inlined to save gas | 6 | 300 |
 | [G-14] | NOT USING THE NAMED RETURN VARIABLES WHEN A FUNCTION RETURNS, WASTES DEPLOYMENT GAS  | 2 | - |
 | [G-15] | Use constants instead of type(uintx).max  | 3 | - |
 | [G-16] | Use assembly to assign address state variables  | 5 | - |
@@ -34,6 +34,7 @@
 | [G-28] | Remove the initializer modifier | 5 | 50000 |
 | [G-29] | Do not calculate constants variables | 3 | - |
 | [G-30] | Using calldata instead of memory for read-only arguments in external functions saves gas | 1| 60 |
+| [G-31] | State variables can be packed into fewer storage slots | 1| 20000 |
 
 
 ##
@@ -517,11 +518,11 @@ Address.isContract(staker : require(IERC1271(staker).isValidSignature(digestHash
 
 ##
 
-## [G-11] Less gas consuming condition checks should be on top
+## [G-11] require() or revert() statements that check input arguments should be at the top of the function
 
 > Instances(4)
 
-When writing conditional statements in smart contracts, it is generally best practice to order the conditions so that the less gas-consuming checks are performed first. This can help to optimize the gas usage of the contract and improve its overall efficiency
+Checks that involve constants should come before checks that involve state variables, function calls, and calculations. By doing these checks first, the function is able to revert before wasting a Gcoldsload (2100 gas*) in a function that may ultimately revert in the unhappy case
 
 ```solidity
 FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
@@ -1194,6 +1195,34 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 ```
 [StrategyManager.sol#L254](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/core/StrategyManager.sol#L254)
 
+##
+
+## [G-31] State variables can be packed into fewer storage slots
+
+> Instances (1) 
+
+> Approximate gas saved : 1 Gsset (20000 gas)
+
+If variables occupying the same slot are both written the same function or by the constructor, avoids a separate Gsset (20000 gas). Reads of the variables can also be cheaper.
+
+```solidity
+FILE: 2023-04-eigenlayer/src/contracts/permissions/Pausable.sol
+
+Total current slots (2) 
+
+_paused only used to check whether or not the contract is currently paused. So uint64 type alone more than enough for this operations. 
+
+So we can avoid 1 Gsset (20000 gas) 
+
+17: IPauserRegistry public pauserRegistry;
+/// @dev whether or not the contract is currently paused
++ 20: uint64 private _paused;
+- 20: uint256 private _paused;
+
+```
+[Pausable.sol#L17-L20](https://github.com/code-423n4/2023-04-eigenlayer/blob/5e4872358cd2bda1936c29f460ece2308af4def6/src/contracts/permissions/Pausable.sol#L17-L20)
+
+
 
 
 
@@ -1226,7 +1255,7 @@ FILE: 2023-04-eigenlayer/src/contracts/core/StrategyManager.sol
 [G‑14]	Usage of uints/ints smaller than 32 bytes (256 bits) incurs overhead	4	-
 [G‑15]	Using private rather than public for constants, saves gas	6	-
 [G‑16]	Division by two should use bit shifting	2	40
-[G‑17]	require() or revert() statements that check input arguments should be at the top of the function	1	-
+[G‑17]	require() or revert() statements that check input arguments should be at the top of the function 1	-
 [G‑18]	Use custom errors rather than revert()/require() strings to save gas	88	-
 [G‑19]	Functions guaranteed to revert when called by normal users can be marked payable	36	756
 [G‑20]	Constructors can be marked payable	7	147
