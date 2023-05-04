@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xepley",
+  "risk": "3",
+  "title": "`deposit()` function is calculation wrong value of `newShares'",
+  "issueId": 427,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/427"
+}
