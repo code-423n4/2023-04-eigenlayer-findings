@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "0xepley",
+  "risk": "2",
+  "title": "`isContract()` is not a reliable way of checking if the input is an EOA",
+  "issueId": 415,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/415"
+}
