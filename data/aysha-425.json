@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "aysha",
+  "risk": "2",
+  "title": "State variables are initialized in an upgradeable contract + there is constructor",
+  "issueId": 425,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/425"
+}
