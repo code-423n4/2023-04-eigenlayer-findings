@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "innertia",
+  "risk": "2",
+  "title": "ERC20 of Revert on Large Approvals & Transfers tokens may get stuck",
+  "issueId": 290,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/290"
+}
