@@ -30,7 +30,7 @@
 | [NC-07] | Lack of zero value check for `StrategyManager.queueWithdrawal` | 1 |
 | [NC-08] | Perform input validation first in `EigenPod.sol` constructor | 1 |
 | [NC-09] | Consider using get prefix for getter functions | 9 |
-| [NC-10] | Shift all constants in `StorageManager.sol` to `StorageManagerStorage.sol` | 1 |
+| [NC-10] | Shift all constants in `StrategyManager.sol` to `StrategyManagerStorage.sol` | 1 |
 | [NC-11] | Use ternary operators to shorten if/else statements | 4 |
 
 | Total Non-Critical Issues | 11 |
