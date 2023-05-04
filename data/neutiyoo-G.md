@@ -4,16 +4,17 @@
 
 Although the current implementation of the [`merkleizeSha256`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol#L129-L153) function in the [`Merkle`](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/libraries/Merkle.sol) contract is correct, it can be more gas-efficient by making use of the following optimizations:
 
-**1. In-place Computation**
+#### 1. In-place Computation
 
 The `merkleizeSha256` function can be optimized by using in-place computation to store intermediate hashes at each level of the Merkle tree. This approach eliminates the need to create new arrays, reducing memory usage and gas costs. Note that this optimization requires that the `leaves` array not be used again after it is modified.
 
 This optimization is valid based on the current implementation because the `leaves` array is not used again after it is modified.
 
-**2. Assembly**
+#### 2. Assembly
+
 The use of assembly code to load the left and right siblings into memory is more gas-efficient than using the `abi.encodePacked` function.
 
-**3. Unchecked Arithmetic**
+#### 3. Unchecked Arithmetic
 
 The use of unchecked arithmetic for `uint i` is more gas-efficient as it skips checks for overflow or underflow. This optimization is safe because `i` is always less than `numNodesInLayer`, meaning that overflow is not possible.
 
@@ -78,7 +79,7 @@ library MerkleOptimized {
 }
 ```
 
-**Impact**
+#### Impact
 
 | Function Name            | min  | avg    | median | max     | # calls |
 | ------------------------ | ---- | ------ | ------ | ------- | ------- |
