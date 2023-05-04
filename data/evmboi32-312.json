@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "evmboi32",
+  "risk": "3",
+  "title": "StrategyManager should check if the deposited token is actually the underlying token for the strategy",
+  "issueId": 312,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/312"
+}
