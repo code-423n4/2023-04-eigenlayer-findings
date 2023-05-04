@@ -5,9 +5,10 @@
 |               | Issue         | Risk     | Instances     |
 | :-------------: |:-------------|:-------------:|:-------------:|
 | 1 | `claimableUserDelayedWithdrawals` does not take into account `withdrawalDelayBlocks` | Low | 1 |
-| 2 | `slashQueuedWithdrawal` and `slashShares` functions should emit an event  | Low | 1 |
-| 3 | Immutable state variables lack zero address checks | Low | 7 |
-| 4 | Named return variables not used anywhere in the functions | NC | 2 |
+| 2 | `sharesToUnderlying` and `underlyingToShares` functions marked as `view` but docs say they can make changes | Low | 2 |
+| 3 | `slashQueuedWithdrawal` and `slashShares` functions should emit an event  | Low | 1 |
+| 4 | Immutable state variables lack zero address checks | Low | 7 |
+| 5 | Named return variables not used anywhere in the functions | NC | 2 |
 
 ## Findings
 
@@ -69,7 +70,44 @@ function claimableUserDelayedWithdrawals(address user) external view returns (De
 }
 ```
 
-### 2- `slashQueuedWithdrawal` and `slashShares` functions should emit an event :
+### 2- `sharesToUnderlying` and `underlyingToShares` functions marked as `view` but docs say they can make changes :
+
+#### Risk : Low
+
+The functions `sharesToUnderlying` and `underlyingToShares` are both marked as `view` but their respective comments say that they may make state modifications, because the functions are marked `view` in the StrategyBase contract any strategy that inherits from it will not be able to change the functions mutability and so those functions will never be able to make state modifications. 
+
+If this is just an error in the comments then it must be corrected but if the functions are really supposed to be able to make state modifications then the code must be reviewed to enable that.
+
+#### Proof of Concept
+Instances include:
+
+File: StrategyBase.sol [Line 180-188](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L180-L188)
+```solidity
+/**
+* @notice Used to convert a number of shares to the equivalent amount of underlying tokens for this strategy.
+* @notice In contrast to `sharesToUnderlyingView`, this function **may** make state modifications
+* @param amountShares is the amount of shares to calculate its conversion into the underlying token
+* @dev Implementation for these functions in particular may vary signifcantly for different strategies
+*/
+function sharesToUnderlying(uint256 amountShares) public view virtual override returns (uint256) {
+    return sharesToUnderlyingView(amountShares);
+}
+```
+
+File: StrategyBase.sol [Line 205-213](https://github.com/code-423n4/2023-04-eigenlayer/blob/main/src/contracts/strategies/StrategyBase.sol#L205-L213)
+```solidity
+/**
+* @notice Used to convert an amount of underlying tokens to the equivalent amount of shares in this strategy.
+* @notice In contrast to `underlyingToSharesView`, this function **may** make state modifications
+* @param amountUnderlying is the amount of `underlyingToken` to calculate its conversion into strategy shares
+* @dev Implementation for these functions in particular may vary signifcantly for different strategies
+*/
+function underlyingToShares(uint256 amountUnderlying) external view virtual returns (uint256) {
+    return underlyingToSharesView(amountUnderlying);
+}
+```
+
+### 3- `slashQueuedWithdrawal` and `slashShares` functions should emit an event :
 
 #### Risk : Low
 
@@ -79,7 +117,7 @@ The function `slashShares` is used to slash a given operator/staker shares and t
 
 Consider  emitting events in both `slashQueuedWithdrawal` and `slashShares` functions.
 
-### 3- Immutable state variables lack zero address checks :
+### 4- Immutable state variables lack zero address checks :
 
 Constructors should check the values written in an immutable state variables(address) is not the address(0).
 
@@ -112,7 +150,7 @@ strategyManager = _strategyManager;
 Add non-zero address checks in the constructors for the instances aforementioned.
 
 
-### 4- Adding a `return` statement when the function defines a named return variable, is redundant :
+### 5- Adding a `return` statement when the function defines a named return variable, is redundant :
 
 #### Risk : Non critical
 
