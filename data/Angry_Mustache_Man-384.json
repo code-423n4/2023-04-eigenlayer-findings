@@ -1,0 +1,8 @@
+{
+  "contest": 233,
+  "handle": "Angry_Mustache_Man",
+  "risk": "2",
+  "title": " withdrawal amount should be greater than the REQUIRED_BALANCE_GWEI",
+  "issueId": 384,
+  "issueUrl": "https://github.com/code-423n4/2023-04-eigenlayer-findings/issues/384"
+}
