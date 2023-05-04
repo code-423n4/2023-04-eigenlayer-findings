@@ -8,7 +8,7 @@
 | 2 | `sharesToUnderlying` and `underlyingToShares` functions marked as `view` but docs say they can make changes | Low | 2 |
 | 3 | `slashQueuedWithdrawal` and `slashShares` functions should emit an event  | Low | 1 |
 | 4 | Immutable state variables lack zero address checks | Low | 7 |
-| 5 | Named return variables not used anywhere in the functions | NC | 2 |
+| 5 | Adding a `return` statement when the function defines a named return variable is redundant | NC | 2 |
 
 ## Findings
 
@@ -150,7 +150,7 @@ strategyManager = _strategyManager;
 Add non-zero address checks in the constructors for the instances aforementioned.
 
 
-### 5- Adding a `return` statement when the function defines a named return variable, is redundant :
+### 5- Adding a `return` statement when the function defines a named return variable is redundant :
 
 #### Risk : Non critical
 
