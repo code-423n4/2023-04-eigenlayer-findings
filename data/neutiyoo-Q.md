@@ -87,7 +87,7 @@ Missing zero address check:
 
 ### Recommendation
 
-Check the zero address for the constructor arguments.
+Add zero address checks for the constructor arguments.
 
 ## [L-02] Missing zero address checks in some `initialize` functions
 
@@ -191,7 +191,7 @@ Missing zero address check:
 
 ### Recommendation
 
-Check the zero address for the `initialize` function arguments.
+Add zero address checks for the `initialize` function arguments.
 
 ## [L-03] Missing out-of-bounds access check in the `_removeStrategyFromStakerStrategyList` function
 
@@ -249,7 +249,7 @@ This modification will trigger the following error:
 
 ### Recommendation
 
-Check out-of-bounds access.
+Add an out-of-bounds access check for `strategyIndex` in the `_removeStrategyFromStakerStrategyList` function.
 
 ## [L-04] Missing array length check in the `queueWithdrawal` function
 
